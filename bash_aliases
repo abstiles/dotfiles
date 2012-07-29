@@ -8,3 +8,4 @@ alias ls='ls --color=auto'
 alias view='vim -R'
 alias su="su -m"
 alias tclsh='rlwrap tclsh'
+alias copy="xclip -selection CLIPBOARD"
