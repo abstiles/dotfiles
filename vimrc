@@ -57,6 +57,11 @@ autocmd FileType plaintext nnoremap <buffer> k gk
 autocmd BufRead,BufNewFile README setl filetype=readme
 autocmd FileType readme setl tw=80
 
+"Get highlight info
+autocmd FileType vim map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
+			\ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
+			\ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
+
 " Maps Ctrl-arrows to resizing a window split
 map <silent> <C-Left> <C-w><
 map <silent> <C-Down> <C-W>-
@@ -94,9 +99,23 @@ noremap <C-p> "+p
 map ] :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 
 " Highlight whitespace errors
-highlight ExtraWhitespace ctermbg=red guibg=red
-match ExtraWhitespace /\s\+$\| \+\ze\t/
-autocmd BufWinEnter * match ExtraWhitespace /\s\+$\| \+\ze\t/
-autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$\| \+\ze\t/
-autocmd InsertLeave * match ExtraWhitespace /\s\+$\| \+\ze\t/
-autocmd BufWinLeave * call clearmatches()
+if v:version >= 700
+	highlight ExtraWhitespace ctermbg=red guibg=red
+	match ExtraWhitespace /\s\+$\| \+\ze\t/
+	autocmd BufWinEnter * match ExtraWhitespace /\s\+$\| \+\ze\t/
+	autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$\| \+\ze\t/
+	autocmd InsertLeave * match ExtraWhitespace /\s\+$\| \+\ze\t/
+endif
+if v:version >= 720
+	autocmd BufWinLeave * call clearmatches()
+else
+	autocmd BufWinLeave * match none
+endif
+
+inoremap <C-L> <Esc>:syntax sync fromstart<CR>
+nnoremap <C-L> :syntax sync fromstart<CR>
+
+" LaTeX settings
+":let Tex_FoldedSections=""
+:let Tex_FoldedEnvironments=""
+:let Tex_FoldedMisc=""
