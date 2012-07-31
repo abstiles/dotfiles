@@ -71,6 +71,10 @@ autocmd FileType plaintext nnoremap <buffer> k gk
 autocmd BufRead,BufNewFile README setl filetype=readme
 autocmd FileType readme setl tw=80
 
+"Syntax for testlink case files
+au BufRead,BufNewFile *.tlink setl filetype=testlink
+au! Syntax testlink source $HOME/.vim/testlink.vim
+
 "Get highlight info
 autocmd FileType vim map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
 			\ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"

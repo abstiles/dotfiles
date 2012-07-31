@@ -1,6 +1,8 @@
 #!/bin/bash
 
 alias tclsh='rlwrap tclsh'
+alias windows='XLIB_SKIP_ARGB_VISUALS=1 rdesktop -g 80% -a 16 -T Windows D5125MN9LRZG81.qlogic.org &';
+alias windows-fs='XLIB_SKIP_ARGB_VISUALS=1 rdesktop -fK -a 16 -T Windows D5125MN9LRZG81.qlogic.org &';
 if [[ $(uname) == Linux ]]; then
 	alias ls='ls --color=auto'
 	alias l='ls -CF'
@@ -13,11 +15,17 @@ else
 	alias ls='ls -G'
 fi
 alias view='vim -R'
+alias locks='ls -l /eplnxbld01/FW/nightly/*.lck'
+alias testtools='cd ~/git_repo/testbed/tools && export PKGDIR=`pwd`'
+alias testscripts='cd ~/git_repo/testbed/scripts && export PKGDIR=`pwd`'
+alias autotools='cd ~/git_repo/autotest_tools/tools && export PKGDIR=`pwd`'
 alias su="su -m"
-alias copy="xclip -selection CLIPBOARD"
-alias vless="vim /usr/share/vim/vim73/macros/less.sh"
+alias py27="source ~/py27env/bin/activate"
+alias vless="/usr/share/vim/vim70/macros/less.sh"
+alias vitodo="vim ~/.todo/list.txt"
 alias info="info --vi-keys"
 alias df="df -Ph | sed 's/Mounted on/Mounted_on/' | column -t | sed 's/Mounted_on/Mounted on/'"
+alias vim="vimx"
 function cd () {
 	if [ "$1" == "-" ]; then
 		builtin popd > /dev/null;
