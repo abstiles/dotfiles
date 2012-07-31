@@ -8,39 +8,50 @@ set incsearch
 set nowrap
 set splitright
 
-"Required for Vundle
-filetype off
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
-Bundle 'gmarik/vundle'
-filetype plugin indent on
+" Handle plugins"{{{
+if isdirectory(expand('~/.vim/bundle/vundle'))
+	"Required for Vundle
+	filetype off
+	set rtp+=~/.vim/bundle/vundle/
+	call vundle#rc()
+	Bundle 'gmarik/vundle'
+	filetype plugin indent on
 
-" My Vundle Bundles
-Bundle 'altercation/vim-colors-solarized'
-Bundle 'tpope/vim-surround'
-Bundle 'tpope/vim-repeat'
-Bundle 'tpope/vim-git'
-Bundle 'michaeljsmith/vim-indent-object'
-Bundle 'indentpython'
-Bundle 'fs111/pydoc.vim'
-Bundle 'abstiles/vim-showposition'
+	" My Vundle Bundles
+	Bundle 'altercation/vim-colors-solarized'
+	Bundle 'tpope/vim-surround'
+	Bundle 'tpope/vim-repeat'
+	Bundle 'tpope/vim-git'
+	Bundle 'michaeljsmith/vim-indent-object'
+	Bundle 'indentpython'
+	Bundle 'fs111/pydoc.vim'
+	Bundle 'abstiles/vim-showposition'
+else
+	filetype plugin indent on
+endif
+"}}}
 
-"Cosmetic stuff
+" Cosmetic stuff"{{{
 syntax enable
-set background=dark
-let g:solarized_termtrans=1
-" let g:solarized_degrade=0
-let g:solarized_bold=1
-" let g:solarized_underline=1
-" let g:solarized_italic=1
-" let g:solarized_termcolors=16
-" let g:solarized_contrast="normal"
-" let g:solarized_visibility="normal"
-" let g:solarized_diffmode="normal"
-" let g:solarized_hitrail=0
-" let g:solarized_menu=1
-colorscheme solarized
+if has("gui_running")
+	set background=dark
+	let g:solarized_termtrans=1
+	" let g:solarized_degrade=0
+	let g:solarized_bold=1
+	" let g:solarized_underline=1
+	" let g:solarized_italic=1
+	" let g:solarized_termcolors=16
+	" let g:solarized_contrast="normal"
+	" let g:solarized_visibility="normal"
+	" let g:solarized_diffmode="normal"
+	" let g:solarized_hitrail=0
+	" let g:solarized_menu=1
+	colorscheme solarized
+else
+	colorscheme elflord
+endif
 set title
+"}}}
 
 "Enables block selection past the end of a line
 set ve+=block
@@ -62,6 +73,7 @@ autocmd FileType vim map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),
 			\ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
 			\ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
+" Convenience mappings"{{{
 " Maps Ctrl-arrows to resizing a window split
 map <silent> <C-Left> <C-w><
 map <silent> <C-Down> <C-W>-
@@ -85,18 +97,23 @@ command W w
 command Wq wq
 command WQ wq
 
-let &titleold=getcwd()
-
 " Emacs-like shortcuts in insert mode
 noremap! <C-a> <Home>
 noremap! <C-e> <End>
 
 " Ctrl-y to copy selection to clipboard
-noremap <C-y> "+y
-noremap <C-p> "+p
+if has("clipboard")
+	noremap <C-y> "+y
+	noremap <C-p> "+p
+endif
 
 " Open tag in vertical split
 map ] :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+
+" Fix wonky syntax highlighting by rescanning file
+inoremap <C-L> <Esc>:syntax sync fromstart<CR>
+nnoremap <C-L> :syntax sync fromstart<CR>
+"}}}
 
 " Highlight whitespace errors
 if v:version >= 700
@@ -112,10 +129,9 @@ else
 	autocmd BufWinLeave * match none
 endif
 
-inoremap <C-L> <Esc>:syntax sync fromstart<CR>
-nnoremap <C-L> :syntax sync fromstart<CR>
-
 " LaTeX settings
 ":let Tex_FoldedSections=""
 :let Tex_FoldedEnvironments=""
 :let Tex_FoldedMisc=""
+
+" vim: foldmethod=marker
