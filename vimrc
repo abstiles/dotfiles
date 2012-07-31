@@ -26,6 +26,9 @@ if isdirectory(expand('~/.vim/bundle/vundle'))
 	Bundle 'indentpython'
 	Bundle 'fs111/pydoc.vim'
 	Bundle 'abstiles/vim-showposition'
+elseif filereadable(expand("~/.vim/autoload/pathogen.vim"))
+	call pathogen#infect()
+	filetype plugin indent on
 else
 	filetype plugin indent on
 endif
