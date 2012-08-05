@@ -8,6 +8,7 @@ set incsearch
 set nowrap
 set splitright
 set ve+=block
+let mapleader = ","
 
 " Handle plugins"{{{
 if isdirectory(expand('~/.vim/bundle/vundle'))
@@ -135,5 +136,41 @@ endif"}}}
 ":let Tex_FoldedSections=""
 :let Tex_FoldedEnvironments=""
 :let Tex_FoldedMisc="""}}}
+
+" Vimux mappings"{{{
+autocmd VimLeave * call VimuxCloseRunner()<CR>
+map <Leader>vp :call VimuxPromptCommand()<CR>
+map <Leader>vr :call VimuxRunCommand("clear; " . expand("%:p"))<CR>
+map <F5> :call VimuxRunCommand("clear; " . expand("%:p"))<CR>
+map <Leader>vv :VimuxRunLastCommand<CR>
+
+" Easily send commands into the runner pane"{{{
+nnoremap <Leader>vs :set operatorfunc=SendToVimux<cr>g@
+vnoremap <Leader>vs :<c-u>call SendToVimux(visualmode())<cr>
+function! SendToVimux(type)"{{{
+    let saved_register = @@
+    let current_top = line('w0')
+    let current_line = line('.')
+    let current_col = col('.')
+
+    if a:type ==# 'v'
+        normal! `<v`>y
+    elseif a:type ==# 'V'
+        normal! `<V`>y
+    elseif a:type ==# 'char'
+        normal! `[v`]y
+    elseif a:type ==# "^V"
+        silent execute "normal! `[\<C-V>`]y"
+    else
+        normal! `[v`]y
+    endif
+
+	call VimuxRunCommand(substitute(@", "\n*$", "", "") . "\n", 0)
+
+    call cursor(current_top, 1)
+    normal! zt
+    call cursor(current_line, current_col)
+    let @@ = saved_register
+endfunction"}}}"}}}"}}}
 
 " vim: foldmethod=marker
