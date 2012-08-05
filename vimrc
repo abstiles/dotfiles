@@ -7,6 +7,7 @@ set ruler
 set incsearch
 set nowrap
 set splitright
+set ve+=block
 
 " Handle plugins"{{{
 if isdirectory(expand('~/.vim/bundle/vundle'))
@@ -26,6 +27,7 @@ if isdirectory(expand('~/.vim/bundle/vundle'))
 	Bundle 'indentpython'
 	Bundle 'fs111/pydoc.vim'
 	Bundle 'abstiles/vim-showposition'
+	Bundle 'benmills/vimux'
 elseif filereadable(expand("~/.vim/autoload/pathogen.vim"))
 	call pathogen#infect()
 	filetype plugin indent on
@@ -55,9 +57,6 @@ else
 endif
 set title
 "}}}
-
-"Enables block selection past the end of a line
-set ve+=block
 
 "Settings for .txt files
 autocmd BufRead,BufNewFile *.txt setl filetype=plaintext
@@ -118,7 +117,7 @@ inoremap <C-L> <Esc>:syntax sync fromstart<CR>
 nnoremap <C-L> :syntax sync fromstart<CR>
 "}}}
 
-" Highlight whitespace errors
+" Highlight whitespace errors"{{{
 if v:version >= 700
 	highlight ExtraWhitespace ctermbg=red guibg=red
 	match ExtraWhitespace /\s\+$\| \+\ze\t/
@@ -130,11 +129,11 @@ if v:version >= 720
 	autocmd BufWinLeave * call clearmatches()
 else
 	autocmd BufWinLeave * match none
-endif
+endif"}}}
 
-" LaTeX settings
+" LaTeX settings"{{{
 ":let Tex_FoldedSections=""
 :let Tex_FoldedEnvironments=""
-:let Tex_FoldedMisc=""
+:let Tex_FoldedMisc="""}}}
 
 " vim: foldmethod=marker
