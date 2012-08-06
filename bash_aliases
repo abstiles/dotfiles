@@ -26,6 +26,8 @@ alias vitodo="vim ~/.todo/list.txt"
 alias info="info --vi-keys"
 alias df="df -Ph | sed 's/Mounted on/Mounted_on/' | column -t | sed 's/Mounted_on/Mounted on/'"
 
+alias browser='if [[ -z "$BROWSER" ]]; then echo "Environment variable \$BROWSER not set!"; else ($BROWSER &>/dev/null &); fi'
+
 # Use vim with XClipboard support if it exists as a separate command
 type -P vimx &>/dev/null
 if [[ $? -eq 0 ]]; then
