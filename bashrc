@@ -12,6 +12,10 @@ export CVS_RSH=/usr/bin/ssh
 
 export BROWSER=/usr/bin/google-chrome
 
+function VIMRUNTIME() {
+	echo -n `vim -e -T dumb --cmd 'exe "set t_cm=\<C-M>"|echo $VIMRUNTIME|quit' | tr -d '\015'`
+}
+
 source ~/.bash_aliases
 
 source ~/.bash_prompt

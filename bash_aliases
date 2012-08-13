@@ -21,7 +21,7 @@ alias testscripts='cd ~/git_repo/testbed/scripts && export PKGDIR=`pwd`'
 alias autotools='cd ~/git_repo/autotest_tools/tools && export PKGDIR=`pwd`'
 alias su="su -m"
 alias py27="source ~/py27env/bin/activate"
-alias vless="/usr/share/vim/vim70/macros/less.sh"
+alias vless=`VIMRUNTIME`"/macros/less.sh"
 alias vitodo="vim ~/.todo/list.txt"
 alias info="info --vi-keys"
 alias df="df -Ph | sed 's/Mounted on/Mounted_on/' | column -t | sed 's/Mounted_on/Mounted on/'"
