@@ -3,9 +3,9 @@
 alias tclsh='rlwrap tclsh'
 if [[ $(uname) == Linux ]]; then
 	alias ls='ls --color=auto'
-	alias l='ls -CF'
+	alias l='/bin/ls --color=never -CF'
 	alias la='ls -A'
-	alias ll='ls -hAlF'
+	alias ll='ls --color=always -hAlF | less -r'
 	alias grep='grep --color=auto'
 	alias egrep='egrep --color=auto'
 	alias fgrep='fgrep --color=auto'
