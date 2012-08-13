@@ -15,7 +15,7 @@ fi
 alias view='vim -R'
 alias su="su -m"
 alias copy="xclip -selection CLIPBOARD"
-alias vless="vim /usr/share/vim/vim73/macros/less.sh"
+alias vless=`VIMRUNTIME`"/macros/less.sh"
 alias info="info --vi-keys"
 alias df="df -Ph | sed 's/Mounted on/Mounted_on/' | column -t | sed 's/Mounted_on/Mounted on/'"
 
