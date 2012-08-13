@@ -5,6 +5,7 @@ set shiftwidth=4
 set showmatch
 set ruler
 set incsearch
+set hlsearch
 set nowrap
 set splitright
 set ve+=block
