@@ -32,6 +32,7 @@ if v:version >= 700 && isdirectory(expand('~/.vim/bundle/vundle'))
 	Bundle 'benmills/vimux'
 elseif v:version >= 700 && filereadable(expand("~/.vim/autoload/pathogen.vim"))
 	call pathogen#infect()
+	call pathogen#helptags()
 	filetype plugin indent on
 else
 	filetype plugin indent on
