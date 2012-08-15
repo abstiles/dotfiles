@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if [ "$COLORTERM" = "gnome-terminal" ]; then
+	TERM=gnome-256color
+fi
+
 export BROWSER=/usr/bin/chromium
 
 function VIMRUNTIME() {
