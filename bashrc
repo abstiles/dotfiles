@@ -4,6 +4,10 @@ if [ -z $BASHRC_LOADED ]; then
     export PATH;
 fi
 
+if [ "$COLORTERM" = "gnome-terminal" ]; then
+	TERM=gnome-256color
+fi
+
 export PKG_CONFIG_PATH="/usr/lib/pkgconfig"
 
 export CVSEDITOR=/usr/bin/vim
