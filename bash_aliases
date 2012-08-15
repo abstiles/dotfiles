@@ -34,3 +34,10 @@ alias ocd="builtin cd"
 
 # Help me learn the iproute2 stuff.
 alias ifconfig="echo 'Nope. (Use ip addr.)'"
+
+# Help my stupid muscle memory work in spite of myself
+alias :x="exit"
+alias :q="exit"
+alias :Q="exit"
+alias :q!="exit"
+alias :Q!="exit"
