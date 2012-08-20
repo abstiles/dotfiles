@@ -2,6 +2,7 @@
 
 if [ "$COLORTERM" = "gnome-terminal" ]; then
 	TERM=gnome-256color
+	source /etc/profile
 fi
 
 export BROWSER=/usr/bin/chromium
