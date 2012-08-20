@@ -6,6 +6,7 @@ fi
 
 if [ "$COLORTERM" = "gnome-terminal" ]; then
 	TERM=gnome-256color
+	source /etc/profile
 fi
 
 export PKG_CONFIG_PATH="/usr/lib/pkgconfig"
