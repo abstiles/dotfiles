@@ -41,8 +41,8 @@ endif
 
 " Cosmetic stuff"{{{
 syntax enable
+set background=dark
 if has("gui_running")
-	set background=dark
 	let g:solarized_termtrans=1
 	" let g:solarized_degrade=0
 	let g:solarized_bold=1
@@ -55,11 +55,16 @@ if has("gui_running")
 	" let g:solarized_hitrail=0
 	" let g:solarized_menu=1
 	colorscheme solarized
+elseif &diff
+	colorscheme peaksea
 else
 	colorscheme elflord
 endif
 set title
 "}}}
+
+"Settings for starting a diff
+autocmd FilterWritePre * if &diff | set background=dark | colorscheme peaksea | endif
 
 "Settings for .txt files
 autocmd BufRead,BufNewFile *.txt setl filetype=plaintext
@@ -122,6 +127,8 @@ map ] :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 " Fix wonky syntax highlighting by rescanning file
 inoremap <C-L> <Esc>:syntax sync fromstart<CR>
 nnoremap <C-L> :syntax sync fromstart<CR>
+
+command Cleardiff diffoff | colorscheme elflord
 "}}}
 
 " Highlight whitespace errors"{{{
