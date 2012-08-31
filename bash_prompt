@@ -1,11 +1,7 @@
 #!/bin/bash
 
-if [ -e ~/realhome.py ]
-then
-	export REALHOME=`realhome.py`
-else
-	export REALHOME=$HOME
-fi
+export REALHOME=`readlink -f $HOME`
+
 if [[ ${TERM:0:5} == "xterm" ]]; then
 	SET_TITLE='; echo -e -n "\e]0;$CurDir\a"'
 else
