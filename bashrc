@@ -1,6 +1,6 @@
 if [ -z $BASHRC_LOADED ]; then
     export BASHRC_LOADED=1
-    PATH=$HOME/scripts:$PATH:$HOME/bin
+    PATH=`readlink -f $HOME`/scripts:$PATH
     export PATH;
 fi
 
