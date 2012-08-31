@@ -1,0 +1,11 @@
+keymap H SHIFT_LEFT
+keymap L SHIFT_RIGHT
+keymap C-d NEXT_PAGE
+keymap C-u PREV_PAGE
+
+keymap / ISEARCH
+keymap ? ISEARCH_BACK
+
+keymap C-o UNDO
+
+keymap C-h HELP
