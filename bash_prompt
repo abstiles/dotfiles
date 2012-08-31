@@ -2,7 +2,7 @@
 
 export REALHOME=`readlink -f $HOME`
 
-if [[ ${TERM:0:5} == "xterm" ]]; then
+if [[ ( ${TERM:0:5} == "xterm" ) || ( ${TERM:0:5} == "gnome" ) ]]; then
 	SET_TITLE='; echo -e -n "\e]0;$CurDir\a"'
 else
 	SET_TITLE=''
