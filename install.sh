@@ -23,6 +23,14 @@ dir=`dirname $0`
 
 if [ -z "$@" ]; then files='*'; else files="$@"; fi
 
+# Create all directories
+for item in "$files"; do
+	find $dir -type d ! -path $dir/'.*' -path $dir/"$item" -printf '%P\n' | \
+		while read FILE; do
+			mkdir -p $HOME/.$FILE
+		done
+done
+
 # Install all non-shell-script files as dotfiles in the home directory.
 for item in "$files"; do
 	find $dir -type f ! -path $dir/'.*' -path $dir/"$item" -printf '%P\n' | \
