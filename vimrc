@@ -149,7 +149,7 @@ endif"}}}
 
 " Vimux mappings"{{{
 if $TMUX != ""
-	autocmd VimLeave * call VimuxCloseRunner()<CR>
+	autocmd VimLeave * VimuxCloseRunner
 	map <Leader>vp :call VimuxPromptCommand()<CR>
 	map <Leader>vr :call VimuxRunCommand("clear; " . expand("%:p"))<CR>
 	map <F5> :call VimuxRunCommand("clear; " . expand("%:p"))<CR>
