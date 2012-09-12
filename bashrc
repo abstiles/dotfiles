@@ -18,6 +18,7 @@ if [[ $PATH != *$HOME/scripts* ]]; then
     export PATH;
 fi
 
+export TCLLIBPATH="~/tcl_packages"
 export BROWSER=/usr/bin/chromium
 type vless &>/dev/null && { export MANPAGER=vless; }
 
