@@ -1,10 +1,15 @@
 #!/bin/bash
 
-# This is how gnome-terminal identifies itself.
-if [[ ( "$COLORTERM" == "gnome-terminal" ) && ( $TERM == xterm* ) ]]; then
-	# Set the TERM value to something with an appropriate termcap entry and
-	# reload /etc/profile to ensure TERM-specific settings are correct
-	TERM=gnome-256color
+# Set the TERM value to something with an appropriate termcap entry and
+# reload /etc/profile to ensure TERM-specific settings are correct
+if [[ $TERM == xterm* ]]; then
+	if [[ "$COLORTERM" == "gnome-terminal" ]]; then
+		# This is how gnome-terminal identifies itself.
+		TERM=gnome-256color
+	elif [[ "$COLORTERM" == "Terminal" ]]; then
+		# This is how xfce4-terminal identifies itself.
+		TERM=xterm-256color
+	fi
 	source /etc/profile
 fi
 
