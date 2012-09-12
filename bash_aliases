@@ -18,6 +18,9 @@ alias copy="xclip -selection CLIPBOARD"
 alias vless="vim /usr/share/vim/vim73/macros/less.sh"
 alias info="info --vi-keys"
 alias df="df -Ph | sed 's/Mounted on/Mounted_on/' | column -t | sed 's/Mounted_on/Mounted on/'"
+
+alias browser='if [[ -z "$BROWSER" ]]; then echo "Environment variable \$BROWSER not set!"; else ($BROWSER &>/dev/null &); fi'
+
 function cd () {
 	if [ "$1" == "-" ]; then
 		builtin popd > /dev/null;
