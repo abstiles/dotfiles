@@ -13,6 +13,7 @@ if [[ ( "$COLORTERM" == "gnome-terminal" ) && ( $TERM == xterm* ) ]]; then
 fi
 
 export PKG_CONFIG_PATH="/usr/lib/pkgconfig"
+export TCLLIBPATH="~/tcl_packages"
 
 export CVSEDITOR=/usr/bin/vim
 export CVSROOT=:ext:astiles@kop-sds-repos.qlogic.org:/cvs
