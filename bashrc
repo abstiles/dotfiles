@@ -8,8 +8,14 @@ if [[ ( "$COLORTERM" == "gnome-terminal" ) && ( $TERM == xterm* ) ]]; then
 	source /etc/profile
 fi
 
+if [ -z $BASHRC_LOADED ]; then
+    export BASHRC_LOADED=1
+    PATH=`readlink -f $HOME`/scripts:$PATH
+    export PATH;
+fi
+
 export BROWSER=/usr/bin/chromium
-export MANPAGER=vless
+type vless &>/dev/null && { export MANPAGER=vless; }
 
 function VIMRUNTIME() {
 	echo -n `vim -e -T dumb --cmd 'exe "set t_cm=\<C-M>"|echo $VIMRUNTIME|quit' | tr -d '\015'`
