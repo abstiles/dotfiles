@@ -13,8 +13,7 @@ if [[ $TERM == xterm* ]]; then
 	source /etc/profile
 fi
 
-if [ -z $BASHRC_LOADED ]; then
-    export BASHRC_LOADED=1
+if [[ $PATH != *$HOME/scripts* ]]; then
     PATH=`readlink -f $HOME`/scripts:$PATH
     export PATH;
 fi
