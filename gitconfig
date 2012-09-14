@@ -1,0 +1,13 @@
+[user]
+	name = Andrew Stiles
+	email = andrewbstiles@gmail.com
+[merge]
+	tool = vimdiff
+[core]
+	editor = vim
+	excludesfile = ~andrew/.gitignore_global
+	sharedRepository = true
+[color]
+	ui = auto
+[push]
+	default = simple
