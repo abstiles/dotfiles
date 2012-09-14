@@ -1,0 +1,8 @@
+*.swp
+pkgIndex.tcl
+*.o
+*.so
+*.log
+*.out
+*.pyc
+.nfs*
