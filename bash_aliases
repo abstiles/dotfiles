@@ -53,3 +53,7 @@ alias :q="exit"
 alias :Q="exit"
 alias :q!="exit"
 alias :Q!="exit"
+
+for folder in $(find ~/git_repo -maxdepth 1 -mindepth 1 -type d -printf '%P\n'); do
+	alias $folder="cd ~/git_repo/$folder"
+done
