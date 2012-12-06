@@ -19,7 +19,7 @@ fi
 
 stty -ixon
 
-export PKG_CONFIG_PATH="/usr/lib/pkgconfig"
+export PKG_CONFIG_PATH="/usr/lib/pkgconfig:/usr/local/lib/pkgconfig"
 export TCLLIBPATH="~/tcl_packages"
 
 export CVSEDITOR=/usr/bin/vim
