@@ -12,7 +12,7 @@ if [[ ( "$COLORTERM" == "gnome-terminal" ) && ( $TERM == xterm* ) ]]; then
 	source /etc/profile
 fi
 
-if [[ ( "$TERM" == "screen-256color" ) && ( -f "/usr/share/terminfo/s/screen-256color" ) ]]; then
+if [[ ( "$TERM" == "screen-256color" ) && ( ! -f "/usr/share/terminfo/s/screen-256color" ) ]]; then
 	TERM=screen
 	source /etc/profile
 fi
