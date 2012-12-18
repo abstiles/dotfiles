@@ -6,3 +6,8 @@ pkgIndex.tcl
 *.out
 *.pyc
 .nfs*
+*.orig
+*.rej
+*.bak
+*.diff
+*.patch
