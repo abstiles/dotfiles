@@ -188,4 +188,6 @@ if $TMUX != ""
 	endfunction
 endif"}}}"}}}"}}}
 
+set tags=./tags,tags;
+
 " vim: foldmethod=marker
