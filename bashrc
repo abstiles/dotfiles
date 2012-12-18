@@ -17,6 +17,8 @@ if [[ ( "$TERM" == "screen-256color" ) && ( ! -f "/usr/share/terminfo/s/screen-2
 	source /etc/profile
 fi
 
+if [[ -z "$DISPLAY" ]]; then DISPLAY=:0.0; fi
+
 stty -ixon
 
 export PKG_CONFIG_PATH="/usr/lib/pkgconfig:/usr/local/lib/pkgconfig"
