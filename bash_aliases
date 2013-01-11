@@ -7,7 +7,8 @@ if [[ $(uname) == Linux ]]; then
 	alias ls='ls --color=auto'
 	alias l='/bin/ls --color=never -CF'
 	alias la='ls -A'
-	alias ll='ls --color=always -hAlF | less -r'
+	unalias ll
+	function ll () { ls --color=always -hAlF "$@" | less -FR; }
 	alias grep='grep --color=auto'
 	alias egrep='egrep --color=auto'
 	alias fgrep='fgrep --color=auto'
