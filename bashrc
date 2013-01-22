@@ -12,9 +12,12 @@ if [[ ( "$COLORTERM" == "gnome-terminal" ) && ( $TERM == xterm* ) ]]; then
 	source /etc/profile
 fi
 
-if [[ ( "$TERM" == "screen-256color" ) && ( ! -f "/usr/share/terminfo/s/screen-256color" ) ]]; then
-	TERM=screen
-	source /etc/profile
+if [[ ( "$TERM" == "screen-256color" ) ]]; then
+	# screen-256color may not exist -- fall back to "screen" if necessary
+	if ! (tput -Tscreen-256color colors &>/dev/null); then
+		TERM=screen
+		source /etc/profile
+	fi
 fi
 
 if [[ -z "$DISPLAY" ]]; then DISPLAY=:0.0; fi
