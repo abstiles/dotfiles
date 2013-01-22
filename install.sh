@@ -29,23 +29,23 @@ dir=`dirname $0`
 
 if [ -z "$*" ]; then files=('*'); fi
 
-# Create all directories
-for item in "${files[@]}"; do
-	find $dir -type d ! -path "$dir/.*" -path "$dir/$item" | \
-		sed -e "s|^$dir/||" | \
-		while read FILE; do
-			mkdir -p "$HOME/.$FILE"
-		done
-done
-
 # Install all non-shell-script files as dotfiles in the home directory.
 for item in "${files[@]}"; do
-	find $dir -type f ! -path "$dir/.*" -path "$dir/$item" | \
+	find $dir ! -path "$dir/.*" -path "$dir/$item" | \
 		sed -e "s|^$dir/||" | \
 		grep -xv '.*\.sh' | \
 		while read FILE; do
+			# If this path is a directory, create it and move on
+			if [[ -d "$dir/$FILE" ]]; then
+				mkdir -p "$HOME/.$FILE"
+				continue
+			fi
+			# Create the enclosing directory if it doesn't exist
 			# You'd think nested quotes like this wouldn't work, but it's the
 			# only way to get the full path grouped correctly (that I can see).
+			if [[ ! -d "$HOME/.$(dirname "$FILE")" ]]; then
+				mkdir -p "$HOME/.$(dirname "$FILE")"
+			fi
 			ln -s "$(get_real_path "$dir/$FILE")" "$HOME/.$FILE"
 		done
 done
