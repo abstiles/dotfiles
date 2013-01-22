@@ -29,11 +29,12 @@ dir=`dirname $0`
 
 if [ -z "$*" ]; then files=('*'); fi
 
-# Install all non-shell-script files as dotfiles in the home directory.
+# Install all files and directories as dotfiles (and dotdirectories) in the
+# home directory, except this install script.
 for item in "${files[@]}"; do
 	find $dir ! -path "$dir/.*" -path "$dir/$item" | \
+		grep -xv "$0" | \
 		sed -e "s|^$dir/||" | \
-		grep -xv '.*\.sh' | \
 		while read FILE; do
 			# If this path is a directory, create it and move on
 			if [[ -d "$dir/$FILE" ]]; then
