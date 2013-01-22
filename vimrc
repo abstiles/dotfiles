@@ -157,6 +157,8 @@ if $TMUX != ""
 	map <Leader>vr :call VimuxRunCommand("clear; " . expand("%:p"))<CR>
 	map <F5> :call VimuxRunCommand("clear; " . expand("%:p"))<CR>
 	map <Leader>vv :VimuxRunLastCommand<CR>
+	" Automatically resize splits as needed
+	autocmd VimResized * wincmd =
 
 	" Easily send commands into the runner pane"{{{
 	nnoremap <Leader>vs :set operatorfunc=SendToVimux<cr>g@
