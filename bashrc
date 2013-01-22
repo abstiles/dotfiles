@@ -42,10 +42,4 @@ source ~/.bash_aliases
 
 source ~/.bash_prompt
 
-#export PERL_LOCAL_LIB_ROOT="/qlogic/home/5125/astiles/perl5";
-#export PERL_MB_OPT="--install_base /qlogic/home/5125/astiles/perl5";
-#export PERL_MM_OPT="INSTALL_BASE=/qlogic/home/5125/astiles/perl5";
-#export PERL5LIB="/qlogic/home/5125/astiles/perl5/lib/perl5/i386-linux-thread-multi:/qlogic/home/5125/astiles/perl5/lib/perl5:$PERL5LIB";
-#export PATH="/qlogic/home/5125/astiles/perl5/bin:$PATH";
-
 if [ -f /etc/bash_completion ]; then source /etc/bash_completion; fi
