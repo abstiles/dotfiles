@@ -23,10 +23,10 @@ alias browser='if [[ -z "$BROWSER" ]]; then echo "Environment variable \$BROWSER
 function cd () {
 	if [ "$1" == "-" ]; then
 		builtin popd > /dev/null;
-	elif [ -z $1 ]; then
+	elif [ -z "$1" ]; then
 		builtin pushd ~ >/dev/null;
 	else
-		builtin pushd $1 >/dev/null;
+		builtin pushd "$1" >/dev/null;
 	fi
 }
 alias ocd="builtin cd"
