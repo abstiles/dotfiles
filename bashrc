@@ -6,7 +6,7 @@ if [[ $TERM == xterm* ]]; then
 	if [[ "$COLORTERM" == "gnome-terminal" ]]; then
 		# This is how gnome-terminal identifies itself.
 		TERM=gnome-256color
-	elif [[ "$COLORTERM" == "Terminal" ]]; then
+	elif [[ "$COLORTERM" == "xfce4-terminal" ]]; then
 		# This is how xfce4-terminal identifies itself.
 		TERM=xterm-256color
 	fi
