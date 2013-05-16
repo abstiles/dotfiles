@@ -192,4 +192,9 @@ endif"}}}"}}}"}}}
 
 set tags=./tags,tags;
 
+" Mouse support
+if has("mouse")
+	set mouse=a
+endif
+
 " vim: foldmethod=marker
