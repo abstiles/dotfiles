@@ -54,6 +54,15 @@ alias :q="exit"
 alias :Q="exit"
 alias :q!="exit"
 alias :Q!="exit"
+alias :qa="exit"
+alias :Qa="exit"
+alias :qa!="exit"
+alias :Qa!="exit"
+
+alias :vsp="tmux split-window -h"
+alias :Vsp="tmux split-window -h"
+alias :sp="tmux split-window"
+alias :Sp="tmux split-window"
 
 for folder in $(find ~/git_repo -maxdepth 1 -mindepth 1 -type d -printf '%P\n'); do
 	alias $folder="cd ~/git_repo/$folder"
