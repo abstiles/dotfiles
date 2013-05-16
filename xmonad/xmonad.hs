@@ -21,7 +21,7 @@ main = do
 	 }
 	 `additionalKeys`
 	 [ ((mod4Mask, xK_Return), spawn "gnome-terminal")
-	 , ((mod4Mask, xK_l), spawn "gnome-screensaver-command -l")
+	 , ((mod4Mask .|. mod1Mask, xK_l), spawn "gnome-screensaver-command -l")
 	 , ((mod4Mask .|. controlMask, xK_h), sendMessage Shrink)
 	 , ((mod4Mask .|. controlMask, xK_l), sendMessage Expand)
 	 , ((mod4Mask .|. controlMask, xK_j), onNextNeighbour W.view)
