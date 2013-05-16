@@ -22,7 +22,9 @@ fi
 
 if [[ -z "$DISPLAY" ]]; then DISPLAY=:0.0; fi
 
-stty -ixon
+if [ -t 0 ]; then
+	stty -ixon
+fi
 
 export PKG_CONFIG_PATH="/usr/lib/pkgconfig:/usr/local/lib/pkgconfig"
 export TCLLIBPATH="~/tcl_packages"
