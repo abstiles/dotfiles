@@ -1,4 +1,6 @@
 *.swp
+*.swo
+*.swn
 pkgIndex.tcl
 *.o
 *.so
