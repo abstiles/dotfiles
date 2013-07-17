@@ -192,4 +192,15 @@ if has("mouse")
 	set mouse=a
 endif
 
+" Configure statusline with fugitive
+set laststatus=2
+set statusline=%<
+"set statusline+=%<%f
+set statusline+=%{substitute(expand('%:f'),'^fugitive://.*//[^/]*/','fugitive://','')}
+set statusline+=\ %h%m%r
+set statusline+=%{exists('g:loaded_fugitive')?fugitive#statusline():''}
+set statusline+=\ %=%-14.(%l,%c%V%)
+set statusline+=\ %P
+
+
 " vim: foldmethod=marker
