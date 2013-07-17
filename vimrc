@@ -43,22 +43,13 @@ endif
 syntax enable
 set background=dark
 if has("gui_running")
-	let g:solarized_termtrans=1
-	" let g:solarized_degrade=0
-	let g:solarized_bold=1
-	" let g:solarized_underline=1
-	" let g:solarized_italic=1
-	" let g:solarized_termcolors=16
-	" let g:solarized_contrast="normal"
-	" let g:solarized_visibility="normal"
-	" let g:solarized_diffmode="normal"
-	" let g:solarized_hitrail=0
-	" let g:solarized_menu=1
-	colorscheme solarized
+	colorscheme magicbright
+	set guifont=Droid\ Sans\ Mono\ Slashed\ 9
+	set guioptions=aegirmL
 elseif &diff
 	colorscheme peaksea
 else
-	colorscheme elflord
+	colorscheme magicbright
 endif
 set title
 "}}}
