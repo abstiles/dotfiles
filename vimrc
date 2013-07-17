@@ -120,6 +120,10 @@ inoremap <C-L> <Esc>:syntax sync fromstart<CR>
 nnoremap <C-L> :syntax sync fromstart<CR>
 
 command Cleardiff diffoff | colorscheme elflord
+
+" Write file with sudo permissions
+cnoremap w!! w !sudo tee > /dev/null %
+command Sudow write !sudo tee > /dev/null %
 "}}}
 
 " Highlight whitespace errors"{{{
