@@ -150,7 +150,7 @@ if $TMUX != ""
 	autocmd VimLeave * VimuxCloseRunner
 	map <Leader>vp :call VimuxPromptCommand()<CR>
 	map <Leader>vr :call VimuxRunCommand("clear; " . expand("%:p"))<CR>
-	map <F5> :call VimuxRunCommand("clear; " . expand("%:p"))<CR>
+	map <F5> :silent call VimuxRunCommand("clear; make")<CR>
 	map <Leader>vv :VimuxRunLastCommand<CR>
 	" Automatically resize splits as needed
 	autocmd VimResized * wincmd =
