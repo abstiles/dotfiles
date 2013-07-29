@@ -13,3 +13,4 @@ pkgIndex.tcl
 *.bak
 *.diff
 *.patch
+.netrwhist

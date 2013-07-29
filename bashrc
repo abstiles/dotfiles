@@ -1,6 +1,7 @@
 if [ -z $BASHRC_LOADED ]; then
     export BASHRC_LOADED=1
     PATH=`readlink -f $HOME`/scripts:$PATH
+	PATH+=":/cygdrive/c/Program Files (x86)/Vim/vim73/"
     export PATH;
 fi
 
@@ -26,15 +27,10 @@ if [ -t 0 ]; then
 	stty -ixon
 fi
 
-export PKG_CONFIG_PATH="/usr/lib/pkgconfig:/usr/local/lib/pkgconfig"
-export TCLLIBPATH="~/tcl_packages"
+#export MANPAGER=vless
 
-export CVSEDITOR=/usr/bin/vim
-export CVSROOT=:ext:astiles@kop-sds-repos.qlogic.org:/cvs
-export CVS_RSH=/usr/bin/ssh
-
-export BROWSER=/usr/bin/google-chrome
-export MANPAGER=vless
+export WINUSER=$(basename $(whoami) | sed 's/\r*$//')
+export WINHOME="/cygdrive/c/Users/$WINUSER"
 
 function VIMRUNTIME() {
 	echo -n `vim -e -T dumb --cmd 'exe "set t_cm=\<C-M>"|echo $VIMRUNTIME|quit' | tr -d '\015'`

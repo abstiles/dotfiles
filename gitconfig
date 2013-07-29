@@ -1,8 +1,8 @@
 [merge]
 	tool = vimdiff
 [core]
-	editor = vimx
-	excludesfile = /qlogic/home/5125/astiles/.gitignore_global
+	editor = vim
+	excludesfile = ~/.gitignore_global
 	sharedRepository = true
 [color]
 	ui = auto

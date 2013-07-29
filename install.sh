@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+#
+# Git likes to check out files with Windows-style line-endings, which makes
+# things awkward. This line converts this script for execution in bash.
+[ -z "$CRLF_CONVERTED" ] && CRLF_CONVERTED=1 exec bash <(dos2unix < $0)
+export CRLF_CONVERTED=
 
 usage () { cat << EOF
 Usage:
@@ -10,6 +15,24 @@ or for only those files that match the optional file glob(s) passed into
 this script.
 EOF
 }
+
+# Sorry, this script is disabled for now.
+cat << EOF
+At no point was any of this designed with Windows in mind, therefore it's
+completely broken. Symlinks seem to barely work in Windows... some things work
+fine with them, and others don't. Also, the whole "dotfile" convention isn't
+really meaningful in Windows, so there's that.
+
+This script will need to be modified in order to allow easy configuration of
+install rules for every file here. Symlinking dotfiles will probably work just
+fine for things like bash, but e.g., Vim needs a weird level of indirection for
+its vimrc since it doesn't behave well with a symlinked vimrc.
+
+Aborting. Press any key to exit.
+EOF
+# Because Windows likes to close the console after script termination.
+read
+exit 1
 
 # Equivalent to "readlink -f" on Linux, but cross-platform (for BSD)
 get_real_path () {
