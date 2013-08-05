@@ -1,8 +1,9 @@
 if [ -z $BASHRC_LOADED ]; then
-    export BASHRC_LOADED=1
-    PATH=`readlink -f $HOME`/scripts:$PATH
+	export BASHRC_LOADED=1
+	PATH=/usr/bin:$PATH
+	PATH=`readlink -f $HOME`/scripts:$PATH
 	PATH+=":/cygdrive/c/Program Files (x86)/Vim/vim73/"
-    export PATH;
+	export PATH;
 fi
 
 # This is how gnome-terminal identifies itself.

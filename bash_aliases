@@ -3,7 +3,7 @@
 alias tclsh='rlwrap tclsh'
 alias windows='XLIB_SKIP_ARGB_VISUALS=1 rdesktop -g 80% -a 16 -T Windows D5125MN9LRZG81.qlogic.org &';
 alias windows-fs='XLIB_SKIP_ARGB_VISUALS=1 rdesktop -fK -a 16 -T Windows D5125MN9LRZG81.qlogic.org &';
-if [[ $(uname) == Linux ]]; then
+if [[ $(uname) == Linux || $(uname) == CYGWIN* ]]; then
 	alias ls='ls --color=auto'
 	alias l='/bin/ls --color=never -CF'
 	alias la='ls -A'
@@ -36,8 +36,10 @@ function cd () {
 }
 alias ocd="builtin cd"
 
+alias cygwin="cygstart mintty"
+
 # Set Vim's home to be the Windows home, to unify the vimrc location
-alias vim='HOME="$WINHOME" vim'
+alias vim="$HOME='$WINHOME' vim"
 # The following is actually necessary for stupid reasons:
 #     - Need to use cygstart because disown won't work properly.
 #     - Need to specially quote arguments to a command executed by cygstart
