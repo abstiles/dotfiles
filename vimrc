@@ -41,10 +41,10 @@ set background=dark
 if has("gui_running")
 	colorscheme magicbright
 	set guifont=Droid_Sans_Mono_Slashed:h9:cANSI
-	set guioptions=aegirmL
+	set guioptions=egirmL
 	" Set initial window size
 	set lines=50
-	set columns=128
+	set columns=196
 	noremap! <C-S-V> <C-R>+
 elseif &diff
 	"colorscheme peaksea
@@ -54,6 +54,9 @@ else
 endif
 set title
 "}}}
+
+" Automatically resize splits as needed
+autocmd VimResized * wincmd =
 
 "Settings for starting a diff
 "autocmd FilterWritePre * if &diff | set background=dark | colorscheme peaksea | endif
@@ -154,8 +157,6 @@ if $TMUX != ""
 	map <Leader>vr :call VimuxRunCommand("clear; " . expand("%:p"))<CR>
 	map <F5> :silent call VimuxRunCommand("clear; make")<CR>
 	map <Leader>vv :VimuxRunLastCommand<CR>
-	" Automatically resize splits as needed
-	autocmd VimResized * wincmd =
 
 	" Easily send commands into the runner pane"{{{
 	nnoremap <Leader>vs :set operatorfunc=SendToVimux<cr>g@
