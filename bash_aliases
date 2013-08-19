@@ -38,8 +38,6 @@ alias ocd="builtin cd"
 
 alias cygwin="cygstart mintty screen bash"
 
-# Set Vim's home to be the Windows home, to unify the vimrc location
-alias vim="$HOME='$WINHOME' vim"
 # The following is actually necessary for stupid reasons:
 #     - Need to use cygstart because disown won't work properly.
 #     - Need to specially quote arguments to a command executed by cygstart
@@ -63,7 +61,8 @@ function gvim() {
 		fi
 		let _i=$_i+1
 	done
-	HOME="$WINHOME" cygstart gvim.exe ${_fs[@]}
+	# Unset SHELL to get Vim to use the Windows default
+	HOME="$WINHOME" SHELL= cygstart gvim.exe ${_fs[@]}
 }
 
 # Help my stupid muscle memory work in spite of myself

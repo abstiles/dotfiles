@@ -13,7 +13,8 @@ set backspace=indent,eol,start
 let mapleader = ","
 
 " Handle plugins"{{{
-if v:version >= 700 && isdirectory(expand('$HOME/vimfiles/bundle/vundle'))
+if v:version >= 700 && (isdirectory(expand('$HOME/vimfiles/bundle/vundle'))
+			\ || isdirectory(expand('$HOME/.vim/bundle/vundle')))
 	"Required for Vundle
 	filetype off
 	set rtp+=~/.vim/bundle/vundle/
@@ -26,7 +27,8 @@ if v:version >= 700 && isdirectory(expand('$HOME/vimfiles/bundle/vundle'))
 	Bundle 'tpope/vim-repeat'
 	Bundle 'tpope/vim-git'
 	Bundle 'michaeljsmith/vim-indent-object'
-elseif v:version >= 700 && filereadable(expand("$HOME/vimfiles/autoload/pathogen.vim"))
+elseif v:version >= 700 && (filereadable(expand("$HOME/vimfiles/autoload/pathogen.vim"))
+			\ || filereadable(expand("$HOME/.vim/autoload/pathogen.vim")))
 	call pathogen#infect()
 	call pathogen#helptags()
 	filetype plugin indent on
