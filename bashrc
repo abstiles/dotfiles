@@ -1,10 +1,37 @@
-if [ -z $BASHRC_LOADED ]; then
-	export BASHRC_LOADED=1
-	PATH=/usr/bin:$PATH
-	PATH=`readlink -f $HOME`/scripts:$PATH
-	PATH+=":/cygdrive/c/Program Files (x86)/Vim/vim73/"
-	export PATH;
-fi
+add_path() {
+	clear_first=0
+	while (( $# > 0 )); do
+		case "$1" in
+			-f|--force)
+				clear_first=1
+				;;
+			-t|--top)
+				shift
+				if [[ $clear_first == 1 ]]; then
+					PATH=${PATH//$1:/}
+					PATH=${PATH//:$1/}
+				fi
+				[[ $PATH == *$1* ]] || PATH=$1:$PATH
+				;;
+			-b|--bottom)
+				shift
+				;&
+			*)
+				if [[ $clear_first == 1 ]]; then
+					PATH=${PATH//$1:/}
+					PATH=${PATH//:$1/}
+				fi
+				[[ $PATH == *$1* ]] || PATH+=:$1
+		esac
+		shift
+	done
+}
+
+# Configure the PATH
+add_path -f -t /usr/bin
+add_path -t `readlink -f $HOME`/scripts
+add_path "/cygdrive/c/Program Files (x86)/Vim/vim73"
+export PATH;
 
 # This is how gnome-terminal identifies itself.
 if [[ ( "$COLORTERM" == "gnome-terminal" ) && ( $TERM == xterm* ) ]]; then
