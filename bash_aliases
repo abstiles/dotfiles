@@ -36,7 +36,7 @@ function cd () {
 }
 alias ocd="builtin cd"
 
-alias cygwin="cygstart mintty"
+alias cygwin="cygstart mintty screen bash"
 
 # Set Vim's home to be the Windows home, to unify the vimrc location
 alias vim="$HOME='$WINHOME' vim"
@@ -77,10 +77,10 @@ alias :Qa="exit"
 alias :qa!="exit"
 alias :Qa!="exit"
 
-alias :vsp="tmux split-window -h"
-alias :Vsp="tmux split-window -h"
-alias :sp="tmux split-window"
-alias :Sp="tmux split-window"
+alias :vsp="screen -X process v"
+alias :Vsp="screen -X process v"
+alias :sp="screen -X process s"
+alias :Sp="screen -X process s"
 
 #for folder in $(find ~/git_repo -maxdepth 1 -mindepth 1 -type d -printf '%P\n'); do
 #	alias $folder="cd ~/git_repo/$folder"

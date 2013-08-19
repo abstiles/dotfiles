@@ -60,6 +60,8 @@ fi
 export WINUSER=$(basename $(whoami) | sed 's/\r*$//')
 export WINHOME="/cygdrive/c/Users/$WINUSER"
 
+export SHELL=/bin/bash
+
 function VIMRUNTIME() {
 	echo -n `vim -e -T dumb --cmd 'exe "set t_cm=\<C-M>"|echo $VIMRUNTIME|quit' | tr -d '\015'`
 }
