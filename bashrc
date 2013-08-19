@@ -68,4 +68,6 @@ source ~/.bash_aliases
 
 source ~/.bash_prompt
 
+if [ -f ~/.dir_colors ]; then eval $(dircolors -b ~/.dir_colors); fi
+
 if [ -f /etc/bash_completion ]; then source /etc/bash_completion; fi
