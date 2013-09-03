@@ -23,7 +23,9 @@ alias browser='if [[ -z "$BROWSER" ]]; then echo "Environment variable \$BROWSER
 
 function cd () {
 	if [ "$1" == "-" ]; then
+		# Go back to the last directory on the stack.
 		builtin popd > /dev/null;
+		pwd # Print the directory as a reminder.
 	elif [ -z "$1" ]; then
 		builtin pushd ~ >/dev/null;
 	else
