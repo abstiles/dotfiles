@@ -33,6 +33,32 @@ function cd () {
 	fi
 }
 alias ocd="builtin cd"
+function _updirs () {
+	IFS='/' read -a DIRS < <(pwd | grep -o '^.*\/');
+	# Skip first element, which will always be empty.
+	for i in "${DIRS[@]:1}"; do
+		if [[ $i == "$2"* ]] || [[ $(printf '%q' "$i") == "$2"* ]]; then
+			echo "$i"
+		fi
+	done
+}
+complete -o filenames -C _updirs ud
+function ud () {
+	if [[ -z "$1" ]]; then
+		# No args? Go up one level.
+		gotodir=..
+	else
+		# Otherwise go up to the closest directory matching the given name.
+		gotodir=$(pwd | grep -io '^.*'"$1"'\/')
+	fi
+	if [[ -d "$gotodir" ]]; then
+		builtin pushd "$gotodir" >/dev/null;
+	else
+		echo "No such directory." >&2
+		return 1
+	fi
+	pwd # Print the directory for verification's sake.
+}
 
 alias cygwin="cygstart mintty screen bash"
 
