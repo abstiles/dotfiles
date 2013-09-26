@@ -51,8 +51,6 @@ if has("gui_running")
 	set lines=50
 	set columns=196
 	noremap! <C-S-V> <C-R>+
-elseif &diff
-	"colorscheme peaksea
 else
 	colorscheme magicbright
 	inoremap jk <Esc>
@@ -73,7 +71,6 @@ endif
 autocmd VimResized * wincmd =
 
 "Settings for starting a diff
-"autocmd FilterWritePre * if &diff | set background=dark | colorscheme peaksea | endif
 autocmd FilterWritePre * if &diff | set background=dark | endif
 
 "Settings for .txt files
