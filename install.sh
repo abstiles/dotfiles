@@ -72,7 +72,21 @@ apply_rule() {
 			# For Cygwin, this is just ~/.(g)vimrc
 			install_as_cygwin_dotfile "$filename"
 		;;
-		vim/*) # Skip
+		vim/bundle) # Install all bundles (which are expected to be git repos)
+			mkdir -p "$HOME"/.vim/bundle
+			find vim/bundle -maxdepth 1 -mindepth 1 -type d | \
+				while read DIR; do
+				git clone -c core.autocrlf=false "$DIR" \
+					"$HOME"/.vim/bundle/"$(basename "$DIR")" 2>/dev/null || \
+					(cd "$HOME"/.vim/bundle/"$(basename "$DIR")" && git pull -q)
+			done
+			STATIC_FILES=1
+		;;
+		vim/bundle/*) # Skip, handled specially by above
+			return
+		;;
+		*/.git/*) # Skip all git directories
+			return
 		;;
 		*) # Default behaviors -- create dotdirectories and symlink dotfiles
 			# If this file is a directory, create it and move on
