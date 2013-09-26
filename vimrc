@@ -10,7 +10,10 @@ set nowrap
 set splitright
 set ve+=block
 set backspace=indent,eol,start
-let mapleader = ","
+
+" Set 'space' as the leader key
+nnoremap <SPACE> <Nop>
+let mapleader = " "
 
 " Handle plugins"{{{
 if v:version >= 700 && (isdirectory(expand('$HOME/vimfiles/bundle/vundle'))
