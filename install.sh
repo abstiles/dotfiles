@@ -52,6 +52,7 @@ apply_rule() {
 	filename=$1
 	case "$filename" in
 		vim) # Install for both Windows and Cygwin Vim
+			rm "$WINHOME/vimfiles"
 			# On Windows Vim, this is $WINHOME/vimfiles
 			cmd /c "mklink /J $(cygpath -aw $WINHOME/vimfiles) \
 				$(cygpath -aw $MYDIR/$filename)" >/dev/null
