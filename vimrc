@@ -143,12 +143,13 @@ command Sudow write !sudo tee > /dev/null %
 "}}}
 
 " Highlight whitespace errors"{{{
+set listchars=tab:¦·,trail:…
+set list
 if v:version >= 700
-	highlight ExtraWhitespace ctermbg=red guibg=red
-	match ExtraWhitespace /\s\+$\| \+\ze\t/
-	autocmd BufWinEnter * match ExtraWhitespace /\s\+$\| \+\ze\t/
-	autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$\| \+\ze\t/
-	autocmd InsertLeave * match ExtraWhitespace /\s\+$\| \+\ze\t/
+	match WhitespaceErrors /\s\+$\| \+\ze\t/
+	autocmd BufWinEnter * match WhitespaceErrors / \+\ze\t/
+	autocmd InsertEnter * match WhitespaceErrors /\s\+\%#\@<!$\| \+\ze\t/
+	autocmd InsertLeave * match WhitespaceErrors /\s\+$\| \+\ze\t/
 endif
 if v:version >= 720
 	autocmd BufWinLeave * call clearmatches()
