@@ -44,22 +44,13 @@ endif
 syntax enable
 set background=dark
 if has("gui_running")
-	let g:solarized_termtrans=1
-	" let g:solarized_degrade=0
-	let g:solarized_bold=1
-	" let g:solarized_underline=1
-	" let g:solarized_italic=1
-	" let g:solarized_termcolors=16
-	" let g:solarized_contrast="normal"
-	" let g:solarized_visibility="normal"
-	" let g:solarized_diffmode="normal"
-	" let g:solarized_hitrail=0
-	" let g:solarized_menu=1
-	colorscheme solarized
+	colorscheme magicbright
+	set guifont=Droid\ Sans\ Mono\ Slashed\ 9
+	set guioptions=aegirmL
 elseif &diff
 	colorscheme peaksea
 else
-	colorscheme elflord
+	colorscheme magicbright
 endif
 set title
 "}}}
@@ -126,6 +117,10 @@ inoremap <C-L> <Esc>:syntax sync fromstart<CR>
 nnoremap <C-L> :syntax sync fromstart<CR>
 
 command Cleardiff diffoff | colorscheme elflord
+
+" Write file with sudo permissions
+cnoremap w!! w !sudo tee > /dev/null %
+command Sudow write !sudo tee > /dev/null %
 "}}}
 
 " Highlight whitespace errors"{{{
@@ -152,8 +147,10 @@ if $TMUX != ""
 	autocmd VimLeave * VimuxCloseRunner
 	map <Leader>vp :call VimuxPromptCommand()<CR>
 	map <Leader>vr :call VimuxRunCommand("clear; " . expand("%:p"))<CR>
-	map <F5> :call VimuxRunCommand("clear; " . expand("%:p"))<CR>
+	map <F5> :silent call VimuxRunCommand("clear; make")<CR>
 	map <Leader>vv :VimuxRunLastCommand<CR>
+	" Automatically resize splits as needed
+	autocmd VimResized * wincmd =
 
 	" Easily send commands into the runner pane"{{{
 	nnoremap <Leader>vs :set operatorfunc=SendToVimux<cr>g@
@@ -184,5 +181,23 @@ if $TMUX != ""
 		let @@ = saved_register
 	endfunction
 endif"}}}"}}}"}}}
+
+set tags=./tags,tags;
+
+" Mouse support
+if has("mouse")
+	set mouse=a
+endif
+
+" Configure statusline with fugitive
+set laststatus=2
+set statusline=%<
+"set statusline+=%<%f
+set statusline+=%{substitute(expand('%:f'),'^fugitive://.*//[^/]*/','fugitive://','')}
+set statusline+=\ %h%m%r
+set statusline+=%{exists('g:loaded_fugitive')?fugitive#statusline():''}
+set statusline+=\ %=%-14.(%l,%c%V%)
+set statusline+=\ %P
+
 
 " vim: foldmethod=marker

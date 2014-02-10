@@ -1,4 +1,6 @@
 *.swp
+*.swo
+*.swn
 pkgIndex.tcl
 *.o
 *.so
@@ -6,3 +8,8 @@ pkgIndex.tcl
 *.out
 *.pyc
 .nfs*
+*.orig
+*.rej
+*.bak
+*.diff
+*.patch
