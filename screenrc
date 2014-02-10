@@ -1,0 +1,32 @@
+escape ^Ss
+startup_message off
+term screen-256color
+
+# Splits open shells by default
+register s ^sS^sj^sc
+bind \" process s
+bind V split -v
+register v ^sV^sl^sc
+bind | process v
+
+bind j focus down
+bind ^J focus down
+bind k focus up
+bind ^K focus up
+bind h focus left
+bind ^H focus left
+bind l focus right
+bind ^L focus right
+bindkey ^J next
+bindkey ^K prev
+
+# End process when removing a split
+register x ^s:kill^sX
+bind x process x
+
+altscreen on
+# change the hardstatus settings to give an window list at the bottom of the
+# screen, with the time and date and with the current window highlighted
+hardstatus             alwayslastline
+# hardstatus string '%{= mK}%-Lw%{= KW}%50>%n%f* %t%{= mK}%+Lw%< %{= kG}%-=%D %d %M %Y %c:%s%{-}'
+hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B} %m/%d %{W} %c %{g}]'
