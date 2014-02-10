@@ -10,7 +10,10 @@ set nowrap
 set splitright
 set ve+=block
 set backspace=indent,eol,start
-let mapleader = ","
+
+" Set 'space' as the leader key
+nnoremap <SPACE> <Nop>
+let mapleader = " "
 
 " Handle plugins"{{{
 if v:version >= 700 && isdirectory(expand('$HOME/.vim/bundle/vundle'))
@@ -45,8 +48,6 @@ if has("gui_running")
 	" Set initial window size
 	set lines=50
 	set columns=196
-elseif &diff
-	"colorscheme peaksea
 else
 	colorscheme magicbright
 	inoremap jk <Esc>
@@ -54,11 +55,19 @@ endif
 set title
 "}}}
 
+"File encoding defaults
+if has("multi_byte")
+  if &termencoding == ""
+    let &termencoding = &encoding
+  endif
+  set encoding=utf-8                     " better default than latin1
+  setglobal fileencoding=utf-8           " change default file encoding when writing new files
+endif
+
 " Automatically resize splits as needed
 autocmd VimResized * wincmd =
 
 "Settings for starting a diff
-"autocmd FilterWritePre * if &diff | set background=dark | colorscheme peaksea | endif
 autocmd FilterWritePre * if &diff | set background=dark | endif
 
 "Settings for .txt files
@@ -204,5 +213,38 @@ set statusline+=%{exists('g:loaded_fugitive')?fugitive#statusline():''}
 set statusline+=\ %=%-14.(%l,%c%V%)
 set statusline+=\ %P
 
+" For gVim: make the 'file has changed' window not appear and be annoying.
+" Taken from Vim Wiki Tip 1568
+au FileChangedShell * call FCSHandler(expand("<afile>:p"))
+function FCSHandler(name)
+  let msg = 'File "'.a:name.'"'
+  let v:fcs_choice = ''
+  if v:fcs_reason == "deleted"
+    let msg .= " no longer available - 'modified' set"
+    call setbufvar(expand(a:name), '&modified', '1')
+    echohl WarningMsg
+  elseif v:fcs_reason == "time"
+    let msg .= " timestamp changed"
+  elseif v:fcs_reason == "mode"
+    let msg .= " permissions changed"
+  elseif v:fcs_reason == "changed"
+    let msg .= " contents changed"
+    let v:fcs_choice = "ask"
+  elseif v:fcs_reason == "conflict"
+    let msg .= " CONFLICT --"
+    let msg .= " is modified, but"
+    let msg .= " was changed outside Vim"
+    let v:fcs_choice = "ask"
+    echohl ErrorMsg
+  else  " unknown values (future Vim versions?)
+    let msg .= " FileChangedShell reason="
+    let msg .= v:fcs_reason
+    let v:fcs_choice = "ask"
+    echohl ErrorMsg
+  endif
+  redraw!
+  echomsg msg
+  echohl None
+endfunction
 
 " vim: foldmethod=marker

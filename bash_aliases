@@ -1,8 +1,6 @@
 #!/bin/bash
 
 alias tclsh='rlwrap tclsh'
-alias windows='XLIB_SKIP_ARGB_VISUALS=1 rdesktop -g 80% -a 16 -T Windows D5125MN9LRZG81.qlogic.org &';
-alias windows-fs='XLIB_SKIP_ARGB_VISUALS=1 rdesktop -fK -a 16 -T Windows D5125MN9LRZG81.qlogic.org &';
 if [[ $(uname) == Linux ]]; then
 	alias ls='ls --color=auto'
 	alias l='/bin/ls --color=never -CF'
@@ -16,9 +14,7 @@ else
 	alias ls='ls -G'
 fi
 alias view='vim -R'
-alias locks='ls -l /eplnxbld01/FW/nightly/*.lck'
 alias su="su -m"
-alias py27="source ~/py27env/bin/activate"
 alias vitodo="vim ~/.todo/list.txt"
 alias info="info --vi-keys"
 alias df="df -Ph | sed 's/Mounted on/Mounted_on/' | column -t | sed 's/Mounted_on/Mounted on/'"
@@ -33,7 +29,9 @@ fi
 
 function cd () {
 	if [ "$1" == "-" ]; then
+		# Go back to the last directory on the stack.
 		builtin popd > /dev/null;
+		pwd # Print the directory as a reminder.
 	elif [ -z "$1" ]; then
 		builtin pushd ~ >/dev/null;
 	else
@@ -41,6 +39,32 @@ function cd () {
 	fi
 }
 alias ocd="builtin cd"
+function _updirs () {
+	IFS='/' read -a DIRS < <(pwd | grep -o '^.*\/');
+	# Skip first element, which will always be empty.
+	for i in "${DIRS[@]:1}"; do
+		if [[ $i == "$2"* ]] || [[ $(printf '%q' "$i") == "$2"* ]]; then
+			echo "$i"
+		fi
+	done
+}
+complete -o filenames -C _updirs ud
+function ud () {
+	if [[ -z "$1" ]]; then
+		# No args? Go up one level.
+		gotodir=..
+	else
+		# Otherwise go up to the closest directory matching the given name.
+		gotodir=$(pwd | grep -io '^.*'"$1"'\/')
+	fi
+	if [[ -d "$gotodir" ]]; then
+		builtin pushd "$gotodir" >/dev/null;
+	else
+		echo "No such directory." >&2
+		return 1
+	fi
+	pwd # Print the directory for verification's sake.
+}
 
 # Help me learn the iproute2 stuff.
 alias ifconfig="echo 'Nope. (Use ip addr.)'"
@@ -60,14 +84,3 @@ alias :vsp="tmux split-window -h"
 alias :Vsp="tmux split-window -h"
 alias :sp="tmux split-window"
 alias :Sp="tmux split-window"
-
-#for folder in $(find ~/git_repo -maxdepth 1 -mindepth 1 -type d -printf '%P\n'); do
-#	alias $folder="cd ~/git_repo/$folder"
-#done
-
-REPODIRS="$HOME/git_repo/* $HOME/inventory_manager $HOME/projects/bugzilla/bugzilla_templates"
-alias thisweekhere='git log --author=${USER:0:1}*${USER:1} --since="last Sunday" --date=local --pretty="format:%Cblue[%ad]%Cred <`basename $PWD`> %Creset%s"'
-alias lastweekhere='git log --author=${USER:0:1}*${USER:1} --since="1 week ago" --date=local --pretty="format:%Cblue[%ad]%Cred <`basename $PWD`> %Creset%s"'
-alias thisweek='(for dir in '$REPODIRS'; do pushd "$dir" >/dev/null; thisweekhere; echo; popd >/dev/null; done) | sed "/^\$/d" | sort --key=3 -n | sort -M -s --key=2,2'
-alias lastweek='(for dir in '$REPODIRS'; do pushd "$dir" >/dev/null; lastweekhere; echo; popd >/dev/null; done) | sed "/^\$/d" | sort --key=3 -n | sort -M -s --key=2,2'
-unset REPODIRS
