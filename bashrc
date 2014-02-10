@@ -26,15 +26,8 @@ if [ -t 0 ]; then
 	stty -ixon
 fi
 
-export PKG_CONFIG_PATH="/usr/lib/pkgconfig:/usr/local/lib/pkgconfig"
-export TCLLIBPATH="~/tcl_packages"
+#export MANPAGER=vless
 
-export CVSEDITOR=/usr/bin/vim
-export CVSROOT=:ext:astiles@kop-sds-repos.qlogic.org:/cvs
-export CVS_RSH=/usr/bin/ssh
-
-export BROWSER=/usr/bin/google-chrome
-export MANPAGER=vless
 
 function VIMRUNTIME() {
 	echo -n `vim -e -T dumb --cmd 'exe "set t_cm=\<C-M>"|echo $VIMRUNTIME|quit' | tr -d '\015'`

@@ -9,10 +9,11 @@ set hlsearch
 set nowrap
 set splitright
 set ve+=block
+set backspace=indent,eol,start
 let mapleader = ","
 
 " Handle plugins"{{{
-if v:version >= 700 && isdirectory(expand('~/.vim/bundle/vundle'))
+if v:version >= 700 && isdirectory(expand('$HOME/.vim/bundle/vundle'))
 	"Required for Vundle
 	filetype off
 	set rtp+=~/.vim/bundle/vundle/
@@ -21,16 +22,11 @@ if v:version >= 700 && isdirectory(expand('~/.vim/bundle/vundle'))
 	filetype plugin indent on
 
 	" My Vundle Bundles
-	Bundle 'altercation/vim-colors-solarized'
 	Bundle 'tpope/vim-surround'
 	Bundle 'tpope/vim-repeat'
 	Bundle 'tpope/vim-git'
 	Bundle 'michaeljsmith/vim-indent-object'
-	Bundle 'indentpython'
-	Bundle 'fs111/pydoc.vim'
-	Bundle 'abstiles/vim-showposition'
-	Bundle 'benmills/vimux'
-elseif v:version >= 700 && filereadable(expand("~/.vim/autoload/pathogen.vim"))
+elseif v:version >= 700 && filereadable(expand("$HOME/.vim/autoload/pathogen.vim"))
 	call pathogen#infect()
 	call pathogen#helptags()
 	filetype plugin indent on
@@ -46,16 +42,21 @@ if has("gui_running")
 	colorscheme magicbright
 	set guifont=Droid\ Sans\ Mono\ Slashed\ 9
 	set guioptions=aegirmL
+	" Set initial window size
+	set lines=50
+	set columns=128
 elseif &diff
-	colorscheme peaksea
+	"colorscheme peaksea
 else
 	colorscheme magicbright
+	inoremap jk <Esc>
 endif
 set title
 "}}}
 
 "Settings for starting a diff
-autocmd FilterWritePre * if &diff | set background=dark | colorscheme peaksea | endif
+"autocmd FilterWritePre * if &diff | set background=dark | colorscheme peaksea | endif
+autocmd FilterWritePre * if &diff | set background=dark | endif
 
 "Settings for .txt files
 autocmd BufRead,BufNewFile *.txt setl filetype=plaintext
@@ -119,7 +120,7 @@ map ] :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 inoremap <C-L> <Esc>:syntax sync fromstart<CR>
 nnoremap <C-L> :syntax sync fromstart<CR>
 
-command Cleardiff diffoff | colorscheme elflord
+command Cleardiff diffoff
 
 " Write file with sudo permissions
 cnoremap w!! w !sudo tee > /dev/null %

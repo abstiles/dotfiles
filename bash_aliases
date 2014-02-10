@@ -17,9 +17,6 @@ else
 fi
 alias view='vim -R'
 alias locks='ls -l /eplnxbld01/FW/nightly/*.lck'
-alias testtools='cd ~/git_repo/testbed/tools && export PKGDIR=`pwd`'
-alias testscripts='cd ~/git_repo/testbed/scripts && export PKGDIR=`pwd`'
-alias autotools='cd ~/git_repo/autotest_tools/tools && export PKGDIR=`pwd`'
 alias su="su -m"
 alias py27="source ~/py27env/bin/activate"
 alias vitodo="vim ~/.todo/list.txt"
@@ -64,9 +61,9 @@ alias :Vsp="tmux split-window -h"
 alias :sp="tmux split-window"
 alias :Sp="tmux split-window"
 
-for folder in $(find ~/git_repo -maxdepth 1 -mindepth 1 -type d -printf '%P\n'); do
-	alias $folder="cd ~/git_repo/$folder"
-done
+#for folder in $(find ~/git_repo -maxdepth 1 -mindepth 1 -type d -printf '%P\n'); do
+#	alias $folder="cd ~/git_repo/$folder"
+#done
 
 REPODIRS="$HOME/git_repo/* $HOME/inventory_manager $HOME/projects/bugzilla/bugzilla_templates"
 alias thisweekhere='git log --author=${USER:0:1}*${USER:1} --since="last Sunday" --date=local --pretty="format:%Cblue[%ad]%Cred <`basename $PWD`> %Creset%s"'
