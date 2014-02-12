@@ -1,18 +1,20 @@
 #!/bin/bash
 
 alias tclsh='rlwrap tclsh'
-if [[ $(uname) == Linux ]]; then
-	alias ls='ls --color=auto'
-	alias l='/bin/ls --color=never -CF'
-	alias la='ls -A'
+
+if command -v gls &>/dev/null; then
+	alias ls="gls --color=auto"
+	alias l="gls --color=never -CF"
+	alias la="ls -A"
 	unalias ll &>/dev/null
-	function ll () { ls --color=always -hAlF "$@" | less -FR; }
-	alias grep='grep --color=auto'
-	alias egrep='egrep --color=auto'
-	alias fgrep='fgrep --color=auto'
+	function ll () { gls --color=always -hAlF "$@" | less -FXR; }
 else
-	alias ls='ls -G'
+	alias ls='/bin/ls -G'
 fi
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+
 alias view='vim -R'
 alias su="su -m"
 alias copy="xclip -selection CLIPBOARD"
@@ -87,9 +89,6 @@ function cuke () {
 	-e 'dscl_cmd'
 }
 
-# Help me learn the iproute2 stuff.
-alias ifconfig="echo 'Nope. (Use ip addr.)'"
-
 # Help my stupid muscle memory work in spite of myself
 alias :x="exit"
 alias :q="exit"
@@ -105,3 +104,7 @@ alias :vsp="tmux split-window -h"
 alias :Vsp="tmux split-window -h"
 alias :sp="tmux split-window"
 alias :Sp="tmux split-window"
+
+for folder in $(find ~/git_repo/ -maxdepth 1 -mindepth 1 -type d -exec basename {} \;); do
+	alias $folder="cd ~/git_repo/$folder"
+done

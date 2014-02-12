@@ -14,8 +14,7 @@ add_path() {
 				[[ $PATH == *$1* ]] || PATH=$1:$PATH
 				;;
 			-b|--bottom)
-				shift
-				;&
+				;;
 			*)
 				if [[ $clear_first == 1 ]]; then
 					PATH=${PATH//$1:/}
@@ -29,7 +28,7 @@ add_path() {
 
 # Configure the PATH
 add_path -f -t /usr/bin
-add_path -t `readlink -f $HOME`/scripts
+add_path -t `greadlink -f $HOME`/scripts
 export PATH;
 
 # Set the TERM value to something with an appropriate termcap entry and
@@ -61,7 +60,6 @@ fi
 
 export PKG_CONFIG_PATH="/usr/lib/pkgconfig:/usr/local/lib/pkgconfig"
 export TCLLIBPATH="~/tcl_packages"
-export BROWSER=/usr/bin/chromium
 
 if command -v vimpager &> /dev/null; then
 	export PAGER=vimpager
@@ -79,6 +77,8 @@ source ~/.bash_aliases
 
 source ~/.bash_prompt
 
-if [ -f ~/.dir_colors ]; then eval $(dircolors -b ~/.dir_colors); fi
+if command -v gdircolors &>/dev/null; then
+	if [ -f ~/.dir_colors ]; then eval $(gdircolors -b ~/.dir_colors); fi
+fi
 
 if [ -f /etc/bash_completion ]; then source /etc/bash_completion; fi
