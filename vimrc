@@ -9,10 +9,14 @@ set hlsearch
 set nowrap
 set splitright
 set ve+=block
-let mapleader = ","
+set backspace=indent,eol,start
+
+" Set 'space' as the leader key
+nnoremap <SPACE> <Nop>
+let mapleader = " "
 
 " Handle plugins"{{{
-if v:version >= 700 && isdirectory(expand('~/.vim/bundle/vundle'))
+if v:version >= 700 && isdirectory(expand('$HOME/.vim/bundle/vundle'))
 	"Required for Vundle
 	filetype off
 	set rtp+=~/.vim/bundle/vundle/
@@ -21,17 +25,12 @@ if v:version >= 700 && isdirectory(expand('~/.vim/bundle/vundle'))
 	filetype plugin indent on
 
 	" My Vundle Bundles
-	Bundle 'altercation/vim-colors-solarized'
 	Bundle 'tpope/vim-surround'
 	Bundle 'tpope/vim-repeat'
 	Bundle 'tpope/vim-git'
 	Bundle 'michaeljsmith/vim-indent-object'
-	Bundle 'indentpython'
-	Bundle 'fs111/pydoc.vim'
-	Bundle 'abstiles/vim-showposition'
 	Bundle 'benmills/vimux'
-	Bundle 'vim-scripts/peaksea'
-elseif v:version >= 700 && filereadable(expand("~/.vim/autoload/pathogen.vim"))
+elseif v:version >= 700 && filereadable(expand("$HOME/.vim/autoload/pathogen.vim"))
 	call pathogen#infect()
 	call pathogen#helptags()
 	filetype plugin indent on
@@ -46,17 +45,31 @@ set background=dark
 if has("gui_running")
 	colorscheme magicbright
 	set guifont=Droid\ Sans\ Mono\ Slashed\ 9
-	set guioptions=aegirmL
-elseif &diff
-	colorscheme peaksea
+	set guioptions=egirmL
+	" Set initial window size
+	set lines=50
+	set columns=196
 else
 	colorscheme magicbright
+	inoremap jk <Esc>
 endif
 set title
 "}}}
 
+"File encoding defaults
+if has("multi_byte")
+  if &termencoding == ""
+    let &termencoding = &encoding
+  endif
+  set encoding=utf-8                     " better default than latin1
+  setglobal fileencoding=utf-8           " change default file encoding when writing new files
+endif
+
+" Automatically resize splits as needed
+autocmd VimResized * wincmd =
+
 "Settings for starting a diff
-autocmd FilterWritePre * if &diff | set background=dark | colorscheme peaksea | endif
+autocmd FilterWritePre * if &diff | set background=dark | endif
 
 "Settings for .txt files
 autocmd BufRead,BufNewFile *.txt setl filetype=plaintext
@@ -116,7 +129,7 @@ map ] :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 inoremap <C-L> <Esc>:syntax sync fromstart<CR>
 nnoremap <C-L> :syntax sync fromstart<CR>
 
-command Cleardiff diffoff | colorscheme elflord
+command Cleardiff diffoff
 
 " Write file with sudo permissions
 cnoremap w!! w !sudo tee > /dev/null %
@@ -124,12 +137,13 @@ command Sudow write !sudo tee > /dev/null %
 "}}}
 
 " Highlight whitespace errors"{{{
+set listchars=tab:¦·,trail:…
+set list
 if v:version >= 700
-	highlight ExtraWhitespace ctermbg=red guibg=red
-	match ExtraWhitespace /\s\+$\| \+\ze\t/
-	autocmd BufWinEnter * match ExtraWhitespace /\s\+$\| \+\ze\t/
-	autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$\| \+\ze\t/
-	autocmd InsertLeave * match ExtraWhitespace /\s\+$\| \+\ze\t/
+	match WhitespaceErrors /\s\+$\| \+\ze\t/
+	autocmd BufWinEnter * match WhitespaceErrors / \+\ze\t/
+	autocmd InsertEnter * match WhitespaceErrors /\s\+\%#\@<!$\| \+\ze\t/
+	autocmd InsertLeave * match WhitespaceErrors /\s\+$\| \+\ze\t/
 endif
 if v:version >= 720
 	autocmd BufWinLeave * call clearmatches()
@@ -149,8 +163,6 @@ if $TMUX != ""
 	map <Leader>vr :call VimuxRunCommand("clear; " . expand("%:p"))<CR>
 	map <F5> :silent call VimuxRunCommand("clear; make")<CR>
 	map <Leader>vv :VimuxRunLastCommand<CR>
-	" Automatically resize splits as needed
-	autocmd VimResized * wincmd =
 
 	" Easily send commands into the runner pane"{{{
 	nnoremap <Leader>vs :set operatorfunc=SendToVimux<cr>g@
@@ -199,5 +211,38 @@ set statusline+=%{exists('g:loaded_fugitive')?fugitive#statusline():''}
 set statusline+=\ %=%-14.(%l,%c%V%)
 set statusline+=\ %P
 
+" For gVim: make the 'file has changed' window not appear and be annoying.
+" Taken from Vim Wiki Tip 1568
+au FileChangedShell * call FCSHandler(expand("<afile>:p"))
+function FCSHandler(name)
+  let msg = 'File "'.a:name.'"'
+  let v:fcs_choice = ''
+  if v:fcs_reason == "deleted"
+    let msg .= " no longer available - 'modified' set"
+    call setbufvar(expand(a:name), '&modified', '1')
+    echohl WarningMsg
+  elseif v:fcs_reason == "time"
+    let msg .= " timestamp changed"
+  elseif v:fcs_reason == "mode"
+    let msg .= " permissions changed"
+  elseif v:fcs_reason == "changed"
+    let msg .= " contents changed"
+    let v:fcs_choice = "ask"
+  elseif v:fcs_reason == "conflict"
+    let msg .= " CONFLICT --"
+    let msg .= " is modified, but"
+    let msg .= " was changed outside Vim"
+    let v:fcs_choice = "ask"
+    echohl ErrorMsg
+  else  " unknown values (future Vim versions?)
+    let msg .= " FileChangedShell reason="
+    let msg .= v:fcs_reason
+    let v:fcs_choice = "ask"
+    echohl ErrorMsg
+  endif
+  redraw!
+  echomsg msg
+  echohl None
+endfunction
 
 " vim: foldmethod=marker

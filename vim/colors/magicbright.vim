@@ -22,13 +22,13 @@ hi Statement term=bold cterm=NONE ctermfg=Yellow gui=NONE guifg=#ffff55
 hi PreProc term=underline ctermfg=LightBlue guifg=#5fd7ff
 hi Type term=underline ctermfg=LightGreen gui=NONE guifg=#87ffaf
 hi Function term=bold ctermfg=White guifg=White
-hi Repeat term=underline ctermfg=White guifg=White
+hi Repeat term=underline ctermfg=White guifg=#ffff55
 hi Operator ctermfg=Red guifg=#ff5555
 hi Ignore ctermfg=black guifg=bg
 hi Error term=reverse ctermbg=Red ctermfg=White guibg=#ff5555 guifg=White
 hi Todo term=standout ctermbg=Yellow ctermfg=Black guifg=Blue guibg=Yellow
 hi NonText term=bold ctermfg=Blue gui=NONE guifg=#84aeff
-hi SpecialKey term=bold ctermfg=LightBlue guifg=#5fd7ff
+hi SpecialKey term=bold ctermfg=60 guifg=#304860
 hi Directory term=bold ctermfg=LightBlue guifg=#afffff
 hi ErrorMsg term=standout ctermfg=15 ctermbg=1 guifg=White guibg=#c03b3b
 hi Visual term=reverse ctermbg=242 guibg=#6c6c6c
@@ -77,3 +77,6 @@ hi clear Question
 hi link Question Type
 hi clear SignColumn
 hi link SignColumn FoldColumn
+
+" Custom highlighting group for whitespace errors. Based on SpecialKey for best appearance.
+hi WhitespaceErrors term=reverse ctermbg=52 ctermfg=60 gui=undercurl guifg=#304860 guisp=DarkRed

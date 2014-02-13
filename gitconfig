@@ -5,9 +5,7 @@
 	tool = vimdiff
 [core]
 	editor = vim
-	excludesfile = ~andrew/.gitignore_global
+	excludesfile = ~/.gitignore_global
 	sharedRepository = true
 [color]
 	ui = auto
-[push]
-	default = simple

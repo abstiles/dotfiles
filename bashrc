@@ -1,4 +1,36 @@
-#!/bin/bash
+add_path() {
+	clear_first=0
+	while (( $# > 0 )); do
+		case "$1" in
+			-f|--force)
+				clear_first=1
+				;;
+			-t|--top)
+				shift
+				if [[ $clear_first == 1 ]]; then
+					PATH=${PATH//$1:/}
+					PATH=${PATH//:$1/}
+				fi
+				[[ $PATH == *$1* ]] || PATH=$1:$PATH
+				;;
+			-b|--bottom)
+				shift
+				;&
+			*)
+				if [[ $clear_first == 1 ]]; then
+					PATH=${PATH//$1:/}
+					PATH=${PATH//:$1/}
+				fi
+				[[ $PATH == *$1* ]] || PATH+=:$1
+		esac
+		shift
+	done
+}
+
+# Configure the PATH
+add_path -f -t /usr/bin
+add_path -t `readlink -f $HOME`/scripts
+export PATH;
 
 # Set the TERM value to something with an appropriate termcap entry and
 # reload /etc/profile to ensure TERM-specific settings are correct
@@ -11,11 +43,6 @@ if [[ $TERM == xterm* ]]; then
 		TERM=xterm-256color
 	fi
 	source /etc/profile
-fi
-
-if [[ $PATH != *$HOME/scripts* ]]; then
-    PATH=`readlink -f $HOME`/scripts:$PATH
-    export PATH;
 fi
 
 if [[ ( "$TERM" == "screen-256color" ) ]]; then
@@ -44,5 +71,7 @@ function VIMRUNTIME() {
 source ~/.bash_aliases
 
 source ~/.bash_prompt
+
+if [ -f ~/.dir_colors ]; then eval $(dircolors -b ~/.dir_colors); fi
 
 if [ -f /etc/bash_completion ]; then source /etc/bash_completion; fi
