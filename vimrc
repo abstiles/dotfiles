@@ -45,7 +45,7 @@ set background=dark
 if has("gui_running")
 	colorscheme magicbright
 	set guifont=Droid\ Sans\ Mono\ Slashed\ 9
-	set guioptions=egirmL
+	set guioptions=egim
 	" Set initial window size
 	set lines=50
 	set columns=196
