@@ -79,6 +79,10 @@ autocmd FileType plaintext setl linebreak
 autocmd FileType plaintext nnoremap <buffer> j gj
 autocmd FileType plaintext nnoremap <buffer> k gk
 
+autocmd FileType vimwiki setl foldmethod=syntax
+autocmd FileType vimwiki setl foldlevel=1
+let g:vimwiki_folding='list'
+
 "Settings for README files
 autocmd BufRead,BufNewFile README setl filetype=readme
 autocmd FileType readme setl tw=80
