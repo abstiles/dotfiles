@@ -24,6 +24,12 @@ alias df="df -Ph | sed 's/Mounted on/Mounted_on/' | column -t | sed 's/Mounted_o
 
 alias browser='if [[ -z "$BROWSER" ]]; then echo "Environment variable \$BROWSER not set!"; else ($BROWSER &>/dev/null &); fi'
 
+# Use Macvim if available
+
+if command -v mvim &>/dev/null; then
+	alias vim="mvim -v"
+fi
+
 function cd () {
 	if [ "$1" == "-" ]; then
 		# Go back to the last directory on the stack.
