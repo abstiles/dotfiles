@@ -49,6 +49,7 @@ if has("gui_running")
 	" Set initial window size
 	set lines=50
 	set columns=196
+	set fullscreen
 else
 	colorscheme magicbright
 	inoremap jk <Esc>
