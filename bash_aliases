@@ -34,31 +34,57 @@ function cd () {
 	fi
 }
 alias ocd="builtin cd"
-function _updirs () {
-	IFS='/' read -a DIRS < <(pwd | grep -o '^.*\/');
-	# Skip first element, which will always be empty.
-	for i in "${DIRS[@]:1}"; do
-		if [[ $i == "$2"* ]] || [[ $(printf '%q' "$i") == "$2"* ]]; then
-			echo "$i"
-		fi
-	done
-}
-complete -o filenames -C _updirs ud
-function ud () {
+
+# Go up to a containing directory.
+function up () {
 	if [[ -z "$1" ]]; then
-		# No args? Go up one level.
+		# No args? Just go up one level.
 		gotodir=..
 	else
-		# Otherwise go up to the closest directory matching the given name.
-		gotodir=$(pwd | grep -io '^.*'"$1"'\/')
+		# Otherwise set CDPATH to all directories above this one then try to
+		# cd.
+		gotodir="$1"
+		local CDPATH=
+		dir=$(pwd)
+		while [[ $dir != / ]]; do
+			dir=$(dirname $dir)
+			CDPATH+=:$dir
+		done
 	fi
-	if [[ -d "$gotodir" ]]; then
-		builtin pushd "$gotodir" >/dev/null;
-	else
-		echo "No such directory." >&2
-		return 1
-	fi
+	builtin pushd "$gotodir" >/dev/null
 	pwd # Print the directory for verification's sake.
+}
+complete -o dirnames -o nospace -F _upcomp up
+function _upcomp () {
+	local CDPATH=
+	local IFS=$' \n\t'
+	dir=$(pwd)
+	while [[ $dir != / ]]; do
+		dir=$(dirname $dir)
+		CDPATH+=:$dir
+	done
+	# Cheat by piggybacking off cd's built-in completion function. But first
+	# find out what it's registered as (probably _cd, but just to be sure...)
+	cd_completion=$(complete -p cd | sed 's/.*-F //' | cut -d' ' -f1)
+	if [[ -n $cd_completion ]]; then
+		$cd_completion cd $2 $3
+	else # Doesn't exist? Fall back to just the contents of CDPATH.
+		IFS=:
+		DIRS=( $CDPATH )
+		IFS=$' \n\t'
+		for dir in "${DIRS[@]:1}"; do
+			dir=$(basename "$dir")
+			if [[ $dir == "$2"* ]]; then
+				COMPREPLY+=( "$dir"/ )
+			fi
+		done
+	fi
+}
+
+function cuke () {
+	sudo cucumber -c -r features -r features/steps "$@" 2>&1 | \
+		grep -v -e 'warning: class variable access from toplevel' \
+	-e 'dscl_cmd'
 }
 
 # Help me learn the iproute2 stuff.
