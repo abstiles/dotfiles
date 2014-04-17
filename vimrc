@@ -205,15 +205,20 @@ if has("mouse")
 	set mouse=a
 endif
 
-" Configure statusline with fugitive
+" Setup always-on Powerline for the status line
 set laststatus=2
-set statusline=%<
-"set statusline+=%<%f
-set statusline+=%{substitute(expand('%:f'),'^fugitive://.*//[^/]*/','fugitive://','')}
-set statusline+=\ %h%m%r
-set statusline+=%{exists('g:loaded_fugitive')?fugitive#statusline():''}
-set statusline+=\ %=%-14.(%l,%c%V%)
-set statusline+=\ %P
+if has('python')
+python << EOF
+try:
+	from powerline.vim import setup as powerline_setup
+	powerline_setup()
+	del powerline_setup
+except ImportError:
+	# Just shut up if it's not installed, I'll deal without it.
+	pass
+EOF
+endif
+
 
 " For gVim: make the 'file has changed' window not appear and be annoying.
 " Taken from Vim Wiki Tip 1568
