@@ -62,7 +62,14 @@ fi
 export PKG_CONFIG_PATH="/usr/lib/pkgconfig:/usr/local/lib/pkgconfig"
 export TCLLIBPATH="~/tcl_packages"
 export BROWSER=/usr/bin/chromium
-type vless &>/dev/null && { export MANPAGER=vless; }
+
+if command -v vimpager &> /dev/null; then
+	export PAGER=vimpager
+	export MANPAGER=vimpager
+else
+	export PAGER=less
+	export MANPAGER=less
+fi
 
 function VIMRUNTIME() {
 	echo -n `vim -e -T dumb --cmd 'exe "set t_cm=\<C-M>"|echo $VIMRUNTIME|quit' | tr -d '\015'`
