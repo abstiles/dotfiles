@@ -13,16 +13,16 @@ if exists("syntax_on")
   syntax reset
 endif
 let g:colors_name = "MagicBright"
-hi Normal guifg=White guibg=black
+hi Normal guifg=#cccccc guibg=black
 hi Comment term=bold ctermfg=DarkCyan guifg=#00aaaa
-hi Constant term=underline ctermfg=Magenta guifg=#ff55ff
-hi Special term=bold ctermfg=DarkMagenta guifg=#aa00aa
+hi Constant term=underline ctermfg=Magenta guifg=#ff77ff
+hi Special term=bold ctermfg=DarkMagenta guifg=#d700d7
 hi Identifier term=underline cterm=bold ctermfg=Cyan gui=bold guifg=#55ffff
 hi Statement term=bold cterm=NONE ctermfg=Yellow gui=NONE guifg=#ffff55
 hi PreProc term=underline ctermfg=LightBlue guifg=#5fd7ff
 hi Type term=underline ctermfg=LightGreen gui=NONE guifg=#87ffaf
 hi Function term=bold ctermfg=White guifg=White
-hi Repeat term=underline ctermfg=White guifg=#ffff55
+hi Repeat term=underline ctermfg=227 guifg=#ffff55
 hi Operator ctermfg=Red guifg=#ff5555
 hi Ignore ctermfg=black guifg=bg
 hi Error term=reverse ctermbg=Red ctermfg=White guibg=#ff5555 guifg=White
@@ -36,9 +36,9 @@ hi WarningMsg term=standout ctermfg=224 guifg=#ffd7d7
 hi Folded term=standout ctermfg=14 ctermbg=242 guifg=#55ffff guibg=#6c6c6c
 hi FoldColumn term=standout ctermfg=14 ctermbg=242 guifg=#55ffff guibg=#878787
 hi DiffAdd term=bold ctermbg=18 guibg=#3333aa
-hi DiffChange term=bold ctermbg=5 guibg=#aa00cc
+hi DiffChange term=bold ctermbg=53 guibg=#5f005f
 hi DiffDelete term=bold ctermfg=White ctermbg=1 guifg=White guibg=#c03b3b
-hi DiffText term=reverse cterm=bold ctermfg=Yellow ctermbg=164 gui=bold guifg=Yellow guibg=#aa00cc
+hi DiffText term=reverse cterm=bold ctermfg=Yellow ctermbg=127 gui=bold guifg=Yellow guibg=#af00af
 hi SpellBad term=reverse ctermbg=9 gui=undercurl guisp=Red
 hi SpellCap term=reverse ctermbg=12 gui=undercurl guisp=#7777ff
 hi SpellRare term=reverse ctermbg=13 gui=undercurl guisp=Magenta
@@ -46,6 +46,7 @@ hi SpellLocal term=underline ctermbg=6 gui=undercurl guisp=Cyan
 hi PmenuSel guibg=#6c6c6c
 hi PmenuSbar guibg=#878787
 hi TabLine guibg=#6c6c6c
+hi VertSplit guifg=#222222 guibg=#aaaaaa
 
 " Common groups that link to default highlighting.
 " You can specify other highlighting easily.
