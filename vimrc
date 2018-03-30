@@ -10,6 +10,7 @@ set nowrap
 set splitright
 set ve+=block
 set backspace=indent,eol,start
+set formatoptions+=j
 
 " Set 'space' as the leader key
 nnoremap <SPACE> <Nop>
@@ -42,36 +43,40 @@ endif
 " Cosmetic stuff"{{{
 syntax enable
 set background=dark
+source ~/.vim_colorscheme
 if has("gui_running")
-	colorscheme magicbright
-	set guifont=Droid\ Sans\ Mono\ Slashed\ 9
+	execute "colorscheme " . colors
+	set guifont=Droid\ Sans\ Mono\ Slashed\ Perfect:h11
 	set guioptions=egim
 	" Set initial window size
 	set lines=50
 	set columns=196
+	set linespace=1
 	set fullscreen
 else
-	colorscheme magicbright
-	inoremap jk <Esc>
+	execute "colorscheme " . colors
 endif
+" Use the same character for vert splits as Tmux does.
+set fillchars+=vert:│
 set title
 "}}}
 
-"File encoding defaults
+"File encoding defaults"{{{
 if has("multi_byte")
   if &termencoding == ""
     let &termencoding = &encoding
   endif
   set encoding=utf-8                     " better default than latin1
   setglobal fileencoding=utf-8           " change default file encoding when writing new files
-endif
+endif"}}}
 
 " Automatically resize splits as needed
 autocmd VimResized * wincmd =
 
 "Settings for starting a diff
-autocmd FilterWritePre * if &diff | set background=dark | endif
+"autocmd FilterWritePre * if &diff | set background=dark | endif
 
+"Personal settings for filetypes"{{{
 "Settings for .txt files
 autocmd BufRead,BufNewFile *.txt setl filetype=plaintext
 autocmd FileType plaintext setl tw=0
@@ -82,11 +87,40 @@ autocmd FileType plaintext nnoremap <buffer> k gk
 
 autocmd FileType vimwiki setl foldmethod=syntax
 autocmd FileType vimwiki setl foldlevel=1
+autocmd FileType vimwiki setl spell spelllang=en_us
+" Vimwiki prefers spaces to tabs
+autocmd FileType vimwiki setl expandtab
+autocmd FileType vimwiki setl textwidth=80
 let g:vimwiki_folding='list'
 
 "Settings for README files
 autocmd BufRead,BufNewFile README setl filetype=readme
 autocmd FileType readme setl tw=80
+
+"Settings for Ruby files
+autocmd FileType ruby setl expandtab
+autocmd FileType ruby setl shiftwidth=2
+autocmd FileType ruby setl tabstop=2
+autocmd FileType ruby setl softtabstop=2
+
+"Settings for Cucumber feature files
+autocmd FileType cucumber setl expandtab
+autocmd FileType cucumber setl shiftwidth=2
+autocmd FileType cucumber setl tabstop=2
+autocmd FileType cucumber setl softtabstop=2
+
+" Settings for tmux.conf file
+autocmd BufRead,BufNewFile .tmux.conf setl filetype=tmux.conf
+
+" Settings for bash files
+autocmd FileType sh setl noexpandtab
+autocmd FileType sh setl tabstop=4
+
+" Settings for java files
+autocmd FileType java setl expandtab
+autocmd FileType java setl shiftwidth=2
+autocmd FileType java setl tabstop=2
+autocmd FileType java setl softtabstop=2 "}}}
 
 "Get highlight info
 autocmd FileType vim map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
@@ -94,6 +128,9 @@ autocmd FileType vim map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),
 			\ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
 " Convenience mappings"{{{
+" Quickly close the location list
+nnoremap <Leader><Space> :lclose<CR>
+
 " Maps Ctrl-arrows to resizing a window split
 map <silent> <C-Left> <C-w><
 map <silent> <C-Down> <C-W>-
@@ -112,10 +149,10 @@ map <C-j> zj
 map <C-k> zk
 
 " Sloppy finger mappings
-command Q q
-command W w
-command Wq wq
-command WQ wq
+command! Q q
+command! W w
+command! Wq wq
+command! WQ wq
 
 " Emacs-like shortcuts in insert mode
 noremap! <C-a> <Home>
@@ -134,11 +171,18 @@ map ] :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 inoremap <C-L> <Esc>:syntax sync fromstart<CR>
 nnoremap <C-L> :syntax sync fromstart<CR>
 
-command Cleardiff diffoff
+command! Cleardiff diffoff
 
 " Write file with sudo permissions
 cnoremap w!! w !sudo tee > /dev/null %
-command Sudow write !sudo tee > /dev/null %
+command! Sudow write !sudo tee > /dev/null %
+
+" Navigate tabs like my Tmux windows.
+if has("gui_running")
+	map <C-j> gt
+	map <C-k> gT
+endif
+
 "}}}
 
 " Highlight whitespace errors"{{{
@@ -161,55 +205,23 @@ endif"}}}
 :let Tex_FoldedEnvironments=""
 :let Tex_FoldedMisc="""}}}
 
-" Vimux mappings"{{{
-if $TMUX != ""
-	autocmd VimLeave * VimuxCloseRunner
-	map <Leader>vp :call VimuxPromptCommand()<CR>
-	map <Leader>vr :call VimuxRunCommand("clear; " . expand("%:p"))<CR>
-	map <F5> :silent call VimuxRunCommand("clear; make")<CR>
-	map <Leader>vv :VimuxRunLastCommand<CR>
-
-	" Easily send commands into the runner pane"{{{
-	nnoremap <Leader>vs :set operatorfunc=SendToVimux<cr>g@
-	vnoremap <Leader>vs :<c-u>call SendToVimux(visualmode())<cr>
-	function! SendToVimux(type)"{{{
-		let saved_register = @@
-		let current_top = line('w0')
-		let current_line = line('.')
-		let current_col = col('.')
-
-		if a:type ==# 'v'
-			normal! `<v`>y
-		elseif a:type ==# 'V'
-			normal! `<V`>y
-		elseif a:type ==# 'char'
-			normal! `[v`]y
-		elseif a:type ==# "^V"
-			silent execute "normal! `[\<C-V>`]y"
-		else
-			normal! `[v`]y
-		endif
-
-		call VimuxRunCommand(substitute(@", "\n*$", "", "") . "\n", 0)
-
-		call cursor(current_top, 1)
-		normal! zt
-		call cursor(current_line, current_col)
-		let @@ = saved_register
-	endfunction
-endif"}}}"}}}"}}}
-
 set tags=./tags,tags;
 
 " Mouse support
 if has("mouse")
 	set mouse=a
 endif
+if has("mouse_sgr")
+	set ttymouse=sgr
+elseif &term =~ '^screen'
+	set ttymouse=xterm2
+end
 
 " Setup always-on Powerline for the status line
 set laststatus=2
-if has('python')
-python << EOF
+if ! has('nvim') && has('python3')
+	"set rtp+=/usr/local/lib/python2.7/site-packages/powerline/bindings/vim/
+python3 << EOF
 try:
 	from powerline.vim import setup as powerline_setup
 	powerline_setup()
@@ -218,13 +230,32 @@ except ImportError:
 	# Just shut up if it's not installed, I'll deal without it.
 	pass
 EOF
+"endif
+else
+	let g:airline_powerline_fonts = 1
+	let g:airline_theme = 'powerline_inverse'
+	let g:airline#extensions#tabline#enabled = 1
 endif
 
+" Easymotion accessories"{{{
+let g:EasyMotion_smartcase = 1
+map <Leader> <Plug>(easymotion-prefix)
+nmap s <Plug>(easymotion-s2)
+xmap s <Plug>(easymotion-s2)
+omap z <Plug>(easymotion-s2)
+nmap <Leader>s <Plug>(easymotion-sn)
+xmap <Leader>s <Plug>(easymotion-sn)
+omap <Leader>z <Plug>(easymotion-sn)
+"}}}
 
-" For gVim: make the 'file has changed' window not appear and be annoying.
+" YouCompleteMe "{{{
+nnoremap <Leader>gd :YcmCompleter GoTo<CR>
+"}}}
+
+" For gVim: make the 'file has changed' window not appear and be annoying."{{{
 " Taken from Vim Wiki Tip 1568
 au FileChangedShell * call FCSHandler(expand("<afile>:p"))
-function FCSHandler(name)
+function! FCSHandler(name)
   let msg = 'File "'.a:name.'"'
   let v:fcs_choice = ''
   if v:fcs_reason == "deleted"
@@ -253,6 +284,31 @@ function FCSHandler(name)
   redraw!
   echomsg msg
   echohl None
-endfunction
+endfunction"}}}
+
+" Convenient tmux/split navigation "{{{
+let g:tmux_navigator_no_mappings = 1
+
+nnoremap <silent> <C-w>h :TmuxNavigateLeft<cr>
+nnoremap <silent> <C-w>j :TmuxNavigateDown<cr>
+nnoremap <silent> <C-w>k :TmuxNavigateUp<cr>
+nnoremap <silent> <C-w>l :TmuxNavigateRight<cr>
+"}}}
+
+" Syntastic settings "{{{
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+" let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_python_checkers = ['flake8', 'pylint', 'mypy']
+let g:syntastic_python_mypy_args = ' --py2 --strict-optional --ignore-missing-imports'
+let g:syntastic_enable_signs = 0
+let g:syntastic_mode_map = {
+	\ "mode": "passive",
+	\ "active_filetypes": [],
+	\ "passive_filetypes": [] }
+let g:syntastic_enable_highlighting = 0
+nnoremap <F6> :SyntasticCheck<CR>
+"}}}
 
 " vim: foldmethod=marker

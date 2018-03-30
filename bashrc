@@ -1,3 +1,5 @@
+[[ -z "$TMUX" ]] && tmux new-session -A -s main
+
 add_path() {
 	clear_first=0
 	while (( $# > 0 )); do
@@ -28,7 +30,9 @@ add_path() {
 
 # Configure the PATH
 add_path -f -t /usr/bin
+add_path -f -t /usr/local/bin
 add_path -t `greadlink -f $HOME`/scripts
+add_path -f "$HOME/.cargo/bin"
 export PATH;
 
 # Set the TERM value to something with an appropriate termcap entry and
@@ -82,3 +86,7 @@ if command -v gdircolors &>/dev/null; then
 fi
 
 if [ -f /etc/bash_completion ]; then source /etc/bash_completion; fi
+if [ -f /usr/local/etc/bash_completion ]; then source /usr/local/etc/bash_completion; fi
+if [ -f ~/.bash_completion ]; then source ~/.bash_completion; fi
+
+eval "$(pipenv --completion)"

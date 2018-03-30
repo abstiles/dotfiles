@@ -1,6 +1,4 @@
-*.swp
-*.swo
-*.swn
+*.sw?
 pkgIndex.tcl
 *.o
 *.so
@@ -15,3 +13,8 @@ pkgIndex.tcl
 *.patch
 .netrwhist
 .DS_Store
+
+git-ignored
+
+venv
+.mypy_cache/
