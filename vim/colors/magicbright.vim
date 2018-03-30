@@ -13,36 +13,36 @@ if exists("syntax_on")
   syntax reset
 endif
 let g:colors_name = "MagicBright"
-hi Normal guifg=#cccccc guibg=black
-hi Comment term=bold ctermfg=DarkCyan guifg=#00aaaa
-hi Constant term=underline ctermfg=Magenta guifg=#ff77ff
-hi Special term=bold ctermfg=DarkMagenta guifg=#d700d7
-hi Identifier term=underline cterm=bold ctermfg=Cyan gui=bold guifg=#55ffff
-hi Statement term=bold cterm=NONE ctermfg=Yellow gui=NONE guifg=#ffff55
-hi PreProc term=underline ctermfg=LightBlue guifg=#5fd7ff
-hi Type term=underline ctermfg=LightGreen gui=NONE guifg=#87ffaf
+hi Normal guifg=#cccccc guibg=Black
+hi Comment term=bold ctermfg=37 guifg=#00aaaa
+hi Constant term=underline ctermfg=207 guifg=#ff77ff
+hi Special term=bold ctermfg=127 guifg=#d700d7
+hi Identifier term=underline cterm=bold ctermfg=87 gui=bold guifg=#55ffff
+hi Statement term=bold cterm=NONE ctermfg=227 gui=NONE guifg=#ffff55
+hi PreProc term=underline ctermfg=81 guifg=#5fd7ff
+hi Type term=underline ctermfg=121 gui=NONE guifg=#87ffaf
 hi Function term=bold ctermfg=White guifg=White
 hi Repeat term=underline ctermfg=227 guifg=#ffff55
-hi Operator ctermfg=Red guifg=#ff5555
-hi Ignore ctermfg=black guifg=bg
-hi Error term=reverse ctermbg=Red ctermfg=White guibg=#ff5555 guifg=White
-hi Todo term=standout ctermbg=Yellow ctermfg=Black guifg=Blue guibg=Yellow
-hi NonText term=bold ctermfg=Blue gui=NONE guifg=#84aeff
+hi Operator ctermfg=203 guifg=#ff5555
+hi Ignore ctermfg=Black guifg=bg
+hi Error term=reverse ctermbg=203 ctermfg=White guibg=#ff5555 guifg=White
+hi Todo term=standout ctermbg=227 ctermfg=Black guifg=#84aeff guibg=#ffff55
+hi NonText term=bold ctermfg=111 gui=NONE guifg=#84aeff
 hi SpecialKey term=bold ctermfg=60 guifg=#304860
-hi Directory term=bold ctermfg=LightBlue guifg=#afffff
-hi ErrorMsg term=standout ctermfg=15 ctermbg=1 guifg=White guibg=#c03b3b
+hi Directory term=bold ctermfg=159 guifg=#afffff
+hi ErrorMsg term=standout ctermfg=White ctermbg=196 guifg=White guibg=#c03b3b
 hi Visual term=reverse ctermbg=242 guibg=#6c6c6c
 hi WarningMsg term=standout ctermfg=224 guifg=#ffd7d7
-hi Folded term=standout ctermfg=14 ctermbg=242 guifg=#55ffff guibg=#6c6c6c
-hi FoldColumn term=standout ctermfg=14 ctermbg=242 guifg=#55ffff guibg=#878787
+hi Folded term=standout ctermfg=87 ctermbg=242 guifg=#55ffff guibg=#6c6c6c
+hi FoldColumn term=standout ctermfg=87 ctermbg=242 guifg=#55ffff guibg=#878787
 hi DiffAdd term=bold ctermbg=18 guibg=#3333aa
 hi DiffChange term=bold ctermbg=53 guibg=#5f005f
-hi DiffDelete term=bold ctermfg=White ctermbg=1 guifg=White guibg=#c03b3b
-hi DiffText term=reverse cterm=bold ctermfg=Yellow ctermbg=127 gui=bold guifg=Yellow guibg=#af00af
-hi SpellBad term=reverse ctermbg=9 gui=undercurl guisp=Red
-hi SpellCap term=reverse ctermbg=12 gui=undercurl guisp=#7777ff
-hi SpellRare term=reverse ctermbg=13 gui=undercurl guisp=Magenta
-hi SpellLocal term=underline ctermbg=6 gui=undercurl guisp=Cyan
+hi DiffDelete term=bold ctermfg=White ctermbg=196 guifg=White guibg=#c03b3b
+hi DiffText term=reverse cterm=bold ctermfg=227 ctermbg=127 gui=bold guifg=Yellow guibg=#af00af
+hi SpellBad term=reverse ctermbg=203 gui=undercurl guisp=Red
+hi SpellCap term=reverse ctermbg=203 gui=undercurl guisp=#7777ff
+hi SpellRare term=reverse ctermbg=207 gui=undercurl guisp=Magenta
+hi SpellLocal term=underline ctermbg=37 gui=undercurl guisp=Cyan
 hi PmenuSel guibg=#6c6c6c
 hi PmenuSbar guibg=#878787
 hi TabLine guibg=#6c6c6c
@@ -81,3 +81,6 @@ hi link SignColumn FoldColumn
 
 " Custom highlighting group for whitespace errors. Based on SpecialKey for best appearance.
 hi WhitespaceErrors term=reverse ctermbg=52 ctermfg=60 gui=undercurl guifg=#304860 guisp=DarkRed
+
+" Also set the powerline colorscheme
+call system('cp ~/.config/powerline/colors-original.json ~/.config/powerline/colors.json')
