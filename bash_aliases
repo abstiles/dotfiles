@@ -59,7 +59,7 @@ function up () {
 			CDPATH+=:$dir
 		done
 	fi
-	builtin pushd "$gotodir" >/dev/null
+	builtin pushd "$gotodir" >/dev/null || return 1
 	pwd # Print the directory for verification's sake.
 }
 complete -o dirnames -o nospace -F _upcomp up
@@ -87,6 +87,12 @@ function _upcomp () {
 			fi
 		done
 	fi
+}
+
+function repo() {
+	local git_dir
+	git_dir=$(up .git 2>/dev/null) || return 1
+	( cd "$git_dir"/.. && pwd )
 }
 
 function upfile() {
@@ -175,9 +181,9 @@ alias :Vsp="vsp"
 alias :sp="sp"
 alias :Sp="sp"
 
-for folder in $(find ~/git_repo/ -maxdepth 1 -mindepth 1 -type d -exec basename {} \;); do
+for folder in $(find ~/git_repo/ -maxdepth 2 -mindepth 2 -type d -exec basename {} \;); do
 	folder_alias=${folder// /_}
-	eval "$folder_alias() { cd ~/git_repo/'$folder'/\"\${1:-/}\" && pwd; }"
+	eval "$folder_alias() { cd ~/git_repo/*/'$folder'/\"\${1:-/}\" && pwd; }"
 	eval "complete -o nospace -F _cd_$folder_alias $folder_alias"
 	eval "_cd_$folder_alias() { local CDPATH='~/git_repo/$folder'; _cd \"\$2\" \"\$3\"; }"
 done
@@ -264,3 +270,15 @@ function testrail() (
 	ipython2 --no-banner -ic \
 		"from pylib_local.web_services.testrail import *; ${ipy_session_cmd[*]}"
 )
+
+function man() {
+	local vim_cmd
+	local tab='       '
+
+	if (( $# == 2 )) && [[ bash == $1* ]]; then
+		vim_cmd=":/^SHELL BUILTIN COMMANDS/;/^\\S/ij /^       $2/"
+		MANPAGER="vimpager -c '$vim_cmd'" man bash
+	else
+		$(which man) "$@"
+	fi
+}

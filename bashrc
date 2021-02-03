@@ -1,4 +1,17 @@
-[[ -z "$TMUX" ]] && tmux new-session -A -s main
+[[ -z "$TMUX" ]] && /usr/local/bin/tmux new-session -A -s main
+
+# Ensure all my parallel tmux bash sessions don't clobber each other's history
+shopt -s histappend
+# Ignore adjacent duplicate lines and lines beginning with space.
+HISTCONTROL=ignoreboth
+# Default value: 500
+HISTSIZE=10000
+
+export SHELL=$(which bash)
+export EDITOR=vim
+
+export VAULT_ADDR=https://vault.kube.jamf.build
+export VAULT_SKIP_VERIFY=true
 
 add_path() {
 	clear_first=0
@@ -28,11 +41,16 @@ add_path() {
 	done
 }
 
+export GOPATH=$HOME/go
+
 # Configure the PATH
 add_path -f -t /usr/bin
 add_path -f -t /usr/local/bin
+add_path -f -t "$HOME/.local/bin"
 add_path -t `greadlink -f $HOME`/scripts
 add_path -f "$HOME/.cargo/bin"
+add_path -f "$GOPATH/bin"
+add_path -f /usr/local/opt/go/libexec/bin
 export PATH;
 
 # Set the TERM value to something with an appropriate termcap entry and
@@ -47,6 +65,9 @@ if [[ $TERM == xterm* ]]; then
 	fi
 	source /etc/profile
 fi
+
+# Avoid the fun new quoting behavior in recent GNU coreutils versions.
+export QUOTING_STYLE=escape
 
 if [[ ( "$TERM" == "screen-256color" ) ]]; then
 	# screen-256color may not exist -- fall back to "screen" if necessary
@@ -88,5 +109,7 @@ fi
 if [ -f /etc/bash_completion ]; then source /etc/bash_completion; fi
 if [ -f /usr/local/etc/bash_completion ]; then source /usr/local/etc/bash_completion; fi
 if [ -f ~/.bash_completion ]; then source ~/.bash_completion; fi
+if [ -f /usr/local/share/bash-completion/bash_completion ]; then source /usr/local/share/bash-completion/bash_completion; fi
 
 eval "$(pipenv --completion)"
+eval "$(pyenv init -)"

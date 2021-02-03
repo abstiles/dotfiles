@@ -2,14 +2,43 @@
 
 export REALHOME=`greadlink -f $HOME`
 
-if [[ ( ${TERM:0:5} == "xterm" ) || ( ${TERM:0:5} == "gnome" ) ]]; then
-	SET_TITLE='; echo -e -n "\033]0;$CurDir\a"'
-else
-	SET_TITLE=''
-fi
+export PROMPT_COMMAND="_prompt_cmd"
 
-export PROMPT_COMMAND='DIR=`pwd|sed -e "s!$REALHOME!~!"|sed -e "s!$HOME!~!"`; if [ ${#DIR} -gt 30 ]; then CurDir=${DIR:0:12}...${DIR:${#DIR}-15}; else CurDir=$DIR; fi'"$SET_TITLE"
-export SETCOLOR_CMD='if [ $(whoami) == root ]; then PROMPT_COLOR="\[\033[0;31m\]"; else PROMPT_COLOR="\[\033[0;36m\]"; fi; export PS1="$PROMPT_COLOR[\h|\W]\\$ \[\033[0m\]"'
-export PROMPT_COMMAND="$PROMPT_COMMAND; $SETCOLOR_CMD"
+_prompt_cmd() {
+	_set_color $?
+	_set_title
+}
 
-export PS1="\[\033[0;36m\][\h|\W]$PROMPT_COLOR\\$ \[\033[0m\]"
+_save_history() {
+	# Append new history lines to the history file instead of waiting for the
+	# end of session.
+	history -a
+	# Note I don't care to actually reload any other history that's been added
+	# by other sessions. If I want *everything* I can open a new bash session.
+	# Or load it manually with `history -n`.
+}
+
+_set_title() {
+	local DIR
+	local short_dir
+	DIR=$(pwd|sed -e "s!$REALHOME!~!"|sed -e "s!$HOME!~!");
+	if (( ${#DIR} > 30 )); then
+		short_dir=${DIR:0:12}...${DIR:${#DIR}-15}
+	else
+		short_dir=$DIR
+	fi
+	if [[ ( ${TERM:0:5} == "xterm" ) || ( ${TERM:0:5} == "gnome" ) ]]; then
+		echo -e -n "\033]0;${short_dir}\a"
+	fi
+}
+
+_set_color() {
+	local last_status=$1
+	local color
+	if (( $last_status )); then
+		color="\[\033[0;31m\]"
+	else
+		color="\[\033[0;36m\]"
+	fi
+	export PS1="$color[\W]\\$ \[\033[0m\]"
+}

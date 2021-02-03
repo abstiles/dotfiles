@@ -1,6 +1,3 @@
-[user]
-	name = Andrew Stiles
-	email = andrewbstiles@gmail.com
 [merge]
 	tool = vimdiff
 [core]
@@ -9,3 +6,10 @@
 	sharedRepository = true
 [color]
 	ui = auto
+[includeIf "gitdir:~/git_repo/stash/"]
+   path = .gitconfig_stash
+[includeIf "gitdir:~/git_repo/github/"]
+   path = .gitconfig_github
+[alias]
+	whose-line-is-it-anyway = blame
+	fixup = commit --amend --no-edit
