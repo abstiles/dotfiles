@@ -13,3 +13,5 @@
 [alias]
 	whose-line-is-it-anyway = blame
 	fixup = commit --amend --no-edit
+[init]
+	defaultBranch = develop

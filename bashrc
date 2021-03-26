@@ -23,19 +23,21 @@ add_path() {
 			-t|--top)
 				shift
 				if [[ $clear_first == 1 ]]; then
-					PATH=${PATH//$1:/}
-					PATH=${PATH//:$1/}
+					PATH=${PATH//:$1:/:}
+					PATH=${PATH##$1:}
+					PATH=${PATH%%:$1}
 				fi
-				[[ $PATH == *$1* ]] || PATH=$1:$PATH
+				PATH=$1:$PATH
 				;;
 			-b|--bottom)
 				;;
 			*)
 				if [[ $clear_first == 1 ]]; then
-					PATH=${PATH//$1:/}
-					PATH=${PATH//:$1/}
+					PATH=${PATH//:$1:/:}
+					PATH=${PATH##$1:}
+					PATH=${PATH%%:$1}
 				fi
-				[[ $PATH == *$1* ]] || PATH+=:$1
+				PATH+=:$1
 		esac
 		shift
 	done
@@ -63,7 +65,7 @@ if [[ $TERM == xterm* ]]; then
 		# This is how xfce4-terminal identifies itself.
 		TERM=xterm-256color
 	fi
-	source /etc/profile
+	#source /etc/profile
 fi
 
 # Avoid the fun new quoting behavior in recent GNU coreutils versions.
@@ -73,7 +75,7 @@ if [[ ( "$TERM" == "screen-256color" ) ]]; then
 	# screen-256color may not exist -- fall back to "screen" if necessary
 	if ! (tput -Tscreen-256color colors &>/dev/null); then
 		TERM=screen
-		source /etc/profile
+		#source /etc/profile
 	fi
 fi
 
@@ -109,7 +111,7 @@ fi
 if [ -f /etc/bash_completion ]; then source /etc/bash_completion; fi
 if [ -f /usr/local/etc/bash_completion ]; then source /usr/local/etc/bash_completion; fi
 if [ -f ~/.bash_completion ]; then source ~/.bash_completion; fi
-if [ -f /usr/local/share/bash-completion/bash_completion ]; then source /usr/local/share/bash-completion/bash_completion; fi
+if [ -f /usr/local/etc/profile.d/bash_completion.sh ]; then source /usr/local/etc/profile.d/bash_completion.sh; fi
 
 eval "$(pipenv --completion)"
 eval "$(pyenv init -)"
