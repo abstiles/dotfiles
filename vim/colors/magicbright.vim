@@ -1,7 +1,7 @@
 " local syntax file - set colors on a per-machine basis:
 " vim: tw=0 ts=4 sw=4
 " Vim color file
-" Maintainer:	Andrew Stiles
+" Maintainer:	Anjou Stiles
 " Last Change:	2013 July 17
 
 " A tweaked and extended version of the built-in Elflord colorscheme. Modified
