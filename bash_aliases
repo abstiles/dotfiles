@@ -141,12 +141,6 @@ function headline () {
 	fi
 }
 
-function cuke () {
-	sudo cucumber -c -r features -r features/steps "$@" 2>&1 | \
-		grep -v -e 'warning: class variable access from toplevel' \
-	-e 'dscl_cmd'
-}
-
 # Help my stupid muscle memory work in spite of myself
 alias :x="exit"
 alias :q="exit"
@@ -220,7 +214,6 @@ function invert() {
 		tmux source-file ~/tmux-inverted.conf
 	fi
 	eval $(gdircolors -b ~/.dir_colors)
-	pkill HipChat && sleep 2 && open /Applications/HipChat.app
 }
 
 function scratch() {
@@ -248,28 +241,6 @@ function extract() {
 		bunzip2 "$file" && rm "$file"
 	} 2>/dev/null; done
 }
-
-function testrail() (
-	if [[ "$1" == "--production" ]]; then
-		target=PRODUCTION
-	else
-		target=SANDBOX
-		security export -k /Library/Keychains/System.keychain -t certs -f pemseq \
-			-o "/tmp/osx_keystore.pem" 2>/dev/null || exit 1
-		export REQUESTS_CA_BUNDLE=/tmp/osx_keystore.pem
-	fi
-	if [[ -r ~/.web_services.yml ]]; then
-		ipy_session_cmd=("from pylib_local.web_services.credentials import *;"
-			"Session(target=${target}_TESTRAIL, credentials=Credentials.load_file("
-				"'~/.web_services.yml')['${target}']).make_default()"
-		)
-	else
-		ipy_session_cmd="Session.start('andrew.stiles')"
-	fi
-	export PYTHONPATH=~/git_repo/autotools/tools
-	ipython2 --no-banner -ic \
-		"from pylib_local.web_services.testrail import *; ${ipy_session_cmd[*]}"
-)
 
 function man() {
 	local vim_cmd

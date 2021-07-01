@@ -10,9 +10,6 @@ HISTSIZE=10000
 export SHELL=$(which bash)
 export EDITOR=vim
 
-export VAULT_ADDR=https://vault.kube.jamf.build
-export VAULT_SKIP_VERIFY=true
-
 add_path() {
 	clear_first=0
 	while (( $# > 0 )); do
