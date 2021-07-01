@@ -85,7 +85,11 @@ fi
 export PKG_CONFIG_PATH="/usr/lib/pkgconfig:/usr/local/lib/pkgconfig"
 export TCLLIBPATH="~/tcl_packages"
 
-if command -v vimpager &> /dev/null; then
+source ~/.bash_aliases
+
+source ~/.bash_prompt
+
+if cmd_exists vimpager; then
 	export PAGER=vimpager
 	export MANPAGER=vimpager
 else
@@ -93,15 +97,7 @@ else
 	export MANPAGER=less
 fi
 
-function VIMRUNTIME() {
-	echo -n `vim -e -T dumb --cmd 'exe "set t_cm=\<C-M>"|echo $VIMRUNTIME|quit' | tr -d '\015'`
-}
-
-source ~/.bash_aliases
-
-source ~/.bash_prompt
-
-if command -v gdircolors &>/dev/null; then
+if cmd_exists gdircolors; then
 	if [ -f ~/.dir_colors ]; then eval $(gdircolors -b ~/.dir_colors); fi
 fi
 
@@ -110,5 +106,9 @@ if [ -f /usr/local/etc/bash_completion ]; then source /usr/local/etc/bash_comple
 if [ -f ~/.bash_completion ]; then source ~/.bash_completion; fi
 if [ -f /usr/local/etc/profile.d/bash_completion.sh ]; then source /usr/local/etc/profile.d/bash_completion.sh; fi
 
-eval "$(pipenv --completion)"
-eval "$(pyenv init -)"
+if cmd_exists pipenv; then
+	eval "$(pipenv --completion)"
+fi
+if cmd_exists pyenv; then
+	eval "$(pyenv init -)"
+fi

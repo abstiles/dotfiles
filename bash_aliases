@@ -2,6 +2,16 @@
 
 alias tclsh='rlwrap tclsh'
 
+# Use Macvim if available
+
+if command -v mvim &>/dev/null; then
+	alias vim="mvim -v"
+fi
+
+function VIMRUNTIME() {
+	echo -n $(vim -e -T dumb --cmd 'exe "set t_cm=\<C-M>"|echo $VIMRUNTIME|quit' | tr -d '\015')
+}
+
 if command -v gls &>/dev/null; then
 	alias ls="gls --color=auto"
 	alias l="gls --color=never -CF"
@@ -23,12 +33,6 @@ alias info="info --vi-keys"
 alias df="df -Ph"
 
 alias browser='if [[ -z "$BROWSER" ]]; then echo "Environment variable \$BROWSER not set!"; else ($BROWSER &>/dev/null &); fi'
-
-# Use Macvim if available
-
-if command -v mvim &>/dev/null; then
-	alias vim="mvim -v"
-fi
 
 function cd () {
 	if [ "$1" == "-" ]; then
@@ -252,4 +256,8 @@ function man() {
 	else
 		$(which man) "$@"
 	fi
+}
+
+function cmd_exists() {
+	hash "$1" &>/dev/null
 }
