@@ -179,9 +179,9 @@ alias :Vsp="vsp"
 alias :sp="sp"
 alias :Sp="sp"
 
-for folder in $(find ~/git_repo/ -maxdepth 2 -mindepth 2 -type d -exec basename {} \;); do
+for folder in $(find ~/git_repo/ -maxdepth 1 -mindepth 1 -type d -exec basename {} \;); do
 	folder_alias=${folder// /_}
-	eval "$folder_alias() { cd ~/git_repo/*/'$folder'/\"\${1:-/}\" && pwd; }"
+	eval "$folder_alias() { cd ~/git_repo/'$folder'/\"\${1:-/}\" && pwd; }"
 	eval "complete -o nospace -F _cd_$folder_alias $folder_alias"
 	eval "_cd_$folder_alias() { local CDPATH='~/git_repo/$folder'; _cd \"\$2\" \"\$3\"; }"
 done
@@ -260,4 +260,9 @@ function man() {
 
 function cmd_exists() {
 	hash "$1" &>/dev/null
+}
+
+function genpass() {
+	local len=${1:-30}
+	LC_CTYPE=C gtr -dc A-Za-z0-9_\!\@\#\$\%\^\&\*\(\)-+= < /dev/urandom | head -c "$len"
 }

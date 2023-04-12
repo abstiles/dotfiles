@@ -11,7 +11,18 @@ set splitright
 set ve+=block
 set backspace=indent,eol,start
 set formatoptions+=j
+set shortmess+=c
+set noshowmode
+set updatetime=100
+set hidden
+set autowrite
+if ! has('nvim')
+	set completeopt=menu,popup
+else
+	set completeopt=menu,preview
+endif
 
+nnoremap // :nohlsearch<CR>
 " Set 'space' as the leader key
 nnoremap <SPACE> <Nop>
 let mapleader = " "
@@ -43,9 +54,8 @@ endif
 " Cosmetic stuff"{{{
 syntax enable
 set background=dark
-source ~/.vim_colorscheme
+colorscheme magicbright
 if has("gui_running")
-	execute "colorscheme " . colors
 	set guifont=Droid\ Sans\ Mono\ Slashed\ Perfect:h11
 	set guioptions=egim
 	" Set initial window size
@@ -53,8 +63,6 @@ if has("gui_running")
 	set columns=196
 	set linespace=1
 	set fullscreen
-else
-	execute "colorscheme " . colors
 endif
 " Use the same character for vert splits as Tmux does.
 set fillchars+=vert:│
@@ -63,15 +71,30 @@ set title
 
 "File encoding defaults"{{{
 if has("multi_byte")
-  if &termencoding == ""
-    let &termencoding = &encoding
-  endif
-  set encoding=utf-8                     " better default than latin1
-  setglobal fileencoding=utf-8           " change default file encoding when writing new files
+	if &termencoding == ""
+		let &termencoding = &encoding
+	endif
+	set encoding=utf-8                     " better default than latin1
+	setglobal fileencoding=utf-8           " change default file encoding when writing new files
 endif"}}}
 
 " Automatically resize splits as needed
 autocmd VimResized * wincmd =
+
+" Highlight whitespace errors"{{{
+set listchars=tab:··¦,trail:…
+set list
+if v:version >= 700
+	match WhitespaceErrors /\s\+$\| \+\ze\t/
+	autocmd BufWinEnter * match WhitespaceErrors / \+\ze\t/
+	autocmd InsertEnter * match WhitespaceErrors /\s\+\%#\@<!$\| \+\ze\t/
+	autocmd InsertLeave * match WhitespaceErrors /\s\+$\| \+\ze\t/
+endif
+if v:version >= 720
+	autocmd BufWinLeave * call clearmatches()
+else
+	autocmd BufWinLeave * match none
+endif"}}}
 
 "Settings for starting a diff
 "autocmd FilterWritePre * if &diff | set background=dark | endif
@@ -122,6 +145,18 @@ autocmd FileType java setl shiftwidth=2
 autocmd FileType java setl tabstop=2
 autocmd FileType java setl softtabstop=2 "}}}
 
+" Settings for go files
+augroup CustomGoOptions
+	autocmd!
+	autocmd FileType go setlocal wrap
+	autocmd FileType go setlocal breakat=\ (),:
+	autocmd FileType go setlocal linebreak
+	autocmd FileType go setlocal breakindent
+	autocmd FileType go setlocal breakindentopt=shift:2,min:20,sbr
+	autocmd FileType go setlocal showbreak=\ ↪
+	autocmd FileType go setlocal listchars=tab:\ \ ¦,trail:…,lead:…
+augroup END
+
 "Get highlight info
 autocmd FileType vim map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
 			\ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
@@ -129,7 +164,7 @@ autocmd FileType vim map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),
 
 " Convenience mappings"{{{
 " Quickly close the location list
-nnoremap <Leader><Space> :lclose<CR>
+nnoremap <Leader><Space> :Denite -resume<CR>
 
 " Maps Ctrl-arrows to resizing a window split
 map <silent> <C-Left> <C-w><
@@ -185,21 +220,6 @@ endif
 
 "}}}
 
-" Highlight whitespace errors"{{{
-set listchars=tab:¦·,trail:…
-set list
-if v:version >= 700
-	match WhitespaceErrors /\s\+$\| \+\ze\t/
-	autocmd BufWinEnter * match WhitespaceErrors / \+\ze\t/
-	autocmd InsertEnter * match WhitespaceErrors /\s\+\%#\@<!$\| \+\ze\t/
-	autocmd InsertLeave * match WhitespaceErrors /\s\+$\| \+\ze\t/
-endif
-if v:version >= 720
-	autocmd BufWinLeave * call clearmatches()
-else
-	autocmd BufWinLeave * match none
-endif"}}}
-
 " LaTeX settings"{{{
 ":let Tex_FoldedSections=""
 :let Tex_FoldedEnvironments=""
@@ -219,23 +239,37 @@ end
 
 " Setup always-on Powerline for the status line
 set laststatus=2
-if ! has('nvim') && has('python3')
-	"set rtp+=/usr/local/lib/python2.7/site-packages/powerline/bindings/vim/
-python3 << EOF
-try:
-	from powerline.vim import setup as powerline_setup
-	powerline_setup()
-	del powerline_setup
-except ImportError:
-	# Just shut up if it's not installed, I'll deal without it.
-	pass
-EOF
-"endif
-else
+"if ! has('nvim') && has('python3')
+"	"set rtp+=/usr/local/lib/python2.7/site-packages/powerline/bindings/vim/
+"python3 << EOF
+"try:
+"	from powerline.vim import setup as powerline_setup
+"	powerline_setup()
+"	del powerline_setup
+"except ImportError:
+"	# Just shut up if it's not installed, I'll deal without it.
+"	pass
+"EOF
+""endif
+"else
 	let g:airline_powerline_fonts = 1
-	let g:airline_theme = 'powerline_inverse'
+	let g:airline_theme = 'dark'
+	let g:deus_termcolors = 256
 	let g:airline#extensions#tabline#enabled = 1
-endif
+	" For some reason this theme needs to be set later in the process or else
+	" the colors are incorrect.
+	autocmd User AirlineAfterInit AirlineTheme deus
+	" Because my font doesn't support the powerline column number character
+	" \ue0a3: 
+	if !exists('g:airline_symbols')
+		let g:airline_symbols = {}
+	endif
+	let g:airline_symbols.colnr = " \u2105"
+"endif
+
+" Deal with wrapped lines gracefully
+nnoremap <expr> j v:count ? 'j' : 'gj'
+nnoremap <expr> k v:count ? 'k' : 'gk'
 
 " Easymotion accessories"{{{
 let g:EasyMotion_smartcase = 1
@@ -256,34 +290,34 @@ nnoremap <Leader>gd :YcmCompleter GoTo<CR>
 " Taken from Vim Wiki Tip 1568
 au FileChangedShell * call FCSHandler(expand("<afile>:p"))
 function! FCSHandler(name)
-  let msg = 'File "'.a:name.'"'
-  let v:fcs_choice = ''
-  if v:fcs_reason == "deleted"
-    let msg .= " no longer available - 'modified' set"
-    call setbufvar(expand(a:name), '&modified', '1')
-    echohl WarningMsg
-  elseif v:fcs_reason == "time"
-    let msg .= " timestamp changed"
-  elseif v:fcs_reason == "mode"
-    let msg .= " permissions changed"
-  elseif v:fcs_reason == "changed"
-    let msg .= " contents changed"
-    let v:fcs_choice = "ask"
-  elseif v:fcs_reason == "conflict"
-    let msg .= " CONFLICT --"
-    let msg .= " is modified, but"
-    let msg .= " was changed outside Vim"
-    let v:fcs_choice = "ask"
-    echohl ErrorMsg
-  else  " unknown values (future Vim versions?)
-    let msg .= " FileChangedShell reason="
-    let msg .= v:fcs_reason
-    let v:fcs_choice = "ask"
-    echohl ErrorMsg
-  endif
-  redraw!
-  echomsg msg
-  echohl None
+	let msg = 'File "'.a:name.'"'
+	let v:fcs_choice = ''
+	if v:fcs_reason == "deleted"
+		let msg .= " no longer available - 'modified' set"
+		call setbufvar(expand(a:name), '&modified', '1')
+		echohl WarningMsg
+	elseif v:fcs_reason == "time"
+		let msg .= " timestamp changed"
+	elseif v:fcs_reason == "mode"
+		let msg .= " permissions changed"
+	elseif v:fcs_reason == "changed"
+		let msg .= " contents changed"
+		let v:fcs_choice = "ask"
+	elseif v:fcs_reason == "conflict"
+		let msg .= " CONFLICT --"
+		let msg .= " is modified, but"
+		let msg .= " was changed outside Vim"
+		let v:fcs_choice = "ask"
+		echohl ErrorMsg
+	else  " unknown values (future Vim versions?)
+		let msg .= " FileChangedShell reason="
+		let msg .= v:fcs_reason
+		let v:fcs_choice = "ask"
+		echohl ErrorMsg
+	endif
+	redraw!
+	echomsg msg
+	echohl None
 endfunction"}}}
 
 " Convenient tmux/split navigation "{{{
@@ -309,6 +343,133 @@ let g:syntastic_mode_map = {
 	\ "passive_filetypes": [] }
 let g:syntastic_enable_highlighting = 0
 nnoremap <F6> :SyntasticCheck<CR>
+"}}}
+
+" Vim-go settings "{{{
+let g:deoplete#enable_at_startup = 1
+let g:echodoc#enable_at_startup = 1
+let g:go_auto_type_info = 1
+let g:go_echo_command_info = 0
+let g:go_echo_go_info = 0
+let g:go_rename_command = "gopls"
+" let g:go_debug=['shell-commands','lsp']
+call deoplete#custom#option('omni_patterns', { 'go': '[^. *\t]\.\w*' })
+call deoplete#custom#option('auto_complete_delay', 200 )
+function! s:check_back_space() abort "{{{
+	let col = col('.') - 1
+	return !col || getline('.')[col - 1]  =~ '\s'
+endfunction "}}}
+inoremap <silent><expr> <TAB>
+	\ pumvisible() ? "\<C-n>" :
+	\ <SID>check_back_space() ? "\<TAB>" :
+	\ deoplete#manual_complete()
+inoremap <silent><expr> <S-TAB>
+	\ pumvisible() ? "\<C-p>" :
+	\ <SID>check_back_space() ? "\<TAB>" :
+	\ deoplete#manual_complete()
+nnoremap <Leader>gd :GoDoc<CR>
+nnoremap <Leader>gb :GoBuild<CR>
+nnoremap <Leader>gt :GoTest<CR>
+nnoremap <Leader>ga :GoAlternate<CR>
+nnoremap <Leader>gr :GoRename<CR>
+nnoremap <Leader>ge :GoIfErr<CR>
+"}}}
+
+" Denite settings "{{{
+nnoremap <Leader>m :Denite menu<CR>
+nnoremap <leader>gg :Denite -start-filter -auto-resize grep<CR>
+if ! has("nvim")
+	nnoremap <Leader>ef :Denite -start-filter -direction=dynamicbottom -auto-resize file/rec<CR>
+else
+	nnoremap <Leader>ef :Denite -start-filter -split=floating -auto-resize file/rec<CR>
+endif
+" Define mappings
+autocmd FileType denite call s:denite_my_settings()
+function! s:denite_my_settings() abort
+	nnoremap <silent><buffer><expr> <CR>
+		\ denite#do_map('do_action')
+	nnoremap <silent><buffer><expr> d
+		\ denite#do_map('do_action', 'delete')
+	nnoremap <silent><buffer><expr> e
+		\ denite#do_map('do_action', 'open')
+	nnoremap <silent><buffer><expr> s
+		\ denite#do_map('do_action', 'split')
+	nnoremap <silent><buffer><expr> v
+		\ denite#do_map('do_action', 'vsplit')
+	nnoremap <silent><buffer><expr> p
+		\ denite#do_map('do_action', 'preview')
+	nnoremap <silent><buffer><expr> q
+		\ denite#do_map('quit')
+	nnoremap <silent><buffer><expr> i
+		\ denite#do_map('open_filter_buffer')
+	nnoremap <silent><buffer><expr> <Space>
+		\ denite#do_map('toggle_select').'j'
+endfunction
+autocmd FileType denite-filter call s:denite_filter_my_settings()
+function! s:denite_filter_my_settings() abort
+	imap <silent><buffer> <C-o> <Plug>(denite_filter_quit)
+	call deoplete#custom#buffer_option('auto_complete', v:false)
+endfunction
+" Change file/rec command.
+call denite#custom#var('file/rec', 'command',
+	\ ['ag', '--follow', '--nocolor', '--nogroup', '--ignore', 'vendor', '-g', ''])
+" Change matchers.
+call denite#custom#source(
+	\ 'file_mru', 'matchers', ['matcher/fuzzy', 'matcher/project_files'])
+call denite#custom#source(
+	\ 'file/rec', 'matchers', ['matcher/cpsm'])
+" Change sorters.
+call denite#custom#source(
+	\ 'file/rec', 'sorters', ['sorter/sublime'])
+" Change default action.
+call denite#custom#kind('file', 'default_action', 'vsplit')
+" Add custom menus
+let s:menus = {}
+let s:menus.config = {
+	\ 'description': 'Edit your config files'
+	\ }
+let s:menus.config.file_candidates = [
+	\ ['vimrc', '~/.vimrc'],
+	\ ['bashrc', '~/.bashrc'],
+	\ ['bash_aliases', '~/.bash_aliases'],
+	\ ]
+let s:menus.go_commands = {
+	\ 'description': 'Go commands'
+	\ }
+let s:menus.go_commands.command_candidates = [
+	\ ['Build', 'GoBuild'],
+	\ ['Test', 'GoTest'],
+	\ ['Test Function', 'GoTestFunc'],
+	\ ['Rename', 'GoRename'],
+	\ ['Callers', 'GoCallers'],
+	\ ['Definition', 'GoDef'],
+	\ ['Generate Interface Method Stubs', 'GoImpl'],
+	\ ['Generate If Err Return', 'GoIfErr'],
+	\ ]
+call denite#custom#var('menu', 'menus', s:menus)
+" Ag command on grep source
+call denite#custom#var('grep', {
+	\ 'command': ['ag'],
+	\ 'default_opts': ['-i', '--vimgrep', '--ignore', 'vendor'],
+	\ 'recursive_opts': [],
+	\ 'pattern_opt': [],
+	\ 'separator': ['--'],
+	\ 'final_opts': [],
+	\ })
+" Specify multiple paths in grep source
+"call denite#start([{'name': 'grep',
+"      \ 'args': [['a.vim', 'b.vim'], '', 'pattern']}])
+" Define alias
+call denite#custom#alias('source', 'file/rec/git', 'file/rec')
+call denite#custom#var('file/rec/git', 'command',
+	\ ['git', 'ls-files', '-co', '--exclude-standard'])
+call denite#custom#alias('source', 'file/rec/py', 'file/rec')
+call denite#custom#var('file/rec/py', 'command',
+\ ['scantree.py', '--path', ':directory'])
+" Change ignore_globs
+call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
+	\ [ '.git/', '.ropeproject/', '__pycache__/',
+	\   'venv/', 'images/', '*.min.*', 'img/', 'fonts/'])
 "}}}
 
 " vim: foldmethod=marker

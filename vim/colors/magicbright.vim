@@ -47,6 +47,7 @@ hi PmenuSel guibg=#6c6c6c
 hi PmenuSbar guibg=#878787
 hi TabLine guibg=#6c6c6c
 hi VertSplit guifg=#222222 guibg=#aaaaaa
+hi NormalFloat ctermbg=232
 
 " Common groups that link to default highlighting.
 " You can specify other highlighting easily.
@@ -81,6 +82,3 @@ hi link SignColumn FoldColumn
 
 " Custom highlighting group for whitespace errors. Based on SpecialKey for best appearance.
 hi WhitespaceErrors term=reverse ctermbg=52 ctermfg=60 gui=undercurl guifg=#304860 guisp=DarkRed
-
-" Also set the powerline colorscheme
-call system('cp ~/.config/powerline/colors-original.json ~/.config/powerline/colors.json')

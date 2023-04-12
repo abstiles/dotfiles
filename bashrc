@@ -50,6 +50,7 @@ add_path -t `greadlink -f $HOME`/scripts
 add_path -f "$HOME/.cargo/bin"
 add_path -f "$GOPATH/bin"
 add_path -f /usr/local/opt/go/libexec/bin
+add_path -f "$HOME/.vim/bundle/vimpager"
 export PATH;
 
 # Set the TERM value to something with an appropriate termcap entry and
@@ -105,10 +106,17 @@ if [ -f /etc/bash_completion ]; then source /etc/bash_completion; fi
 if [ -f /usr/local/etc/bash_completion ]; then source /usr/local/etc/bash_completion; fi
 if [ -f ~/.bash_completion ]; then source ~/.bash_completion; fi
 if [ -f /usr/local/etc/profile.d/bash_completion.sh ]; then source /usr/local/etc/profile.d/bash_completion.sh; fi
+if [[ -f /usr/local/share/chtf/chtf.sh ]]; then source /usr/local/share/chtf/chtf.sh; fi
 
 if cmd_exists pipenv; then
 	eval "$(pipenv --completion)"
 fi
 if cmd_exists pyenv; then
+	export PYENV_ROOT="$HOME/.pyenv"
+	add_path -f -t "$PYENV_ROOT/bin"
+	add_path -f -t "$PYENV_ROOT/shims"
+	export PATH
 	eval "$(pyenv init -)"
 fi
+
+source ~/.localsecrets
