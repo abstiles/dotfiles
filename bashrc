@@ -1,4 +1,4 @@
-[[ -z "$TMUX" ]] && /usr/local/bin/tmux new-session -A -s main
+[[ -z "$TMUX" ]] && /opt/homebrew/bin/tmux new-session -A -s main
 
 # Ensure all my parallel tmux bash sessions don't clobber each other's history
 shopt -s histappend
@@ -41,16 +41,20 @@ add_path() {
 }
 
 export GOPATH=$HOME/go
+PYTHON_USER_SITE_DIR=$(python3 -m site --user-site)
 
 # Configure the PATH
 add_path -f -t /usr/bin
 add_path -f -t /usr/local/bin
+add_path -f -t /opt/homebrew/bin
 add_path -f -t "$HOME/.local/bin"
 add_path -t `greadlink -f $HOME`/scripts
 add_path -f "$HOME/.cargo/bin"
 add_path -f "$GOPATH/bin"
+add_path -f -t "${PYTHON_USER_SITE_DIR///lib*}/bin"
 add_path -f /usr/local/opt/go/libexec/bin
 add_path -f "$HOME/.vim/bundle/vimpager"
+add_path -f -t /opt/homebrew/opt/libpq/bin
 export PATH;
 
 # Set the TERM value to something with an appropriate termcap entry and
@@ -97,6 +101,7 @@ else
 	export PAGER=less
 	export MANPAGER=less
 fi
+export BAT_PAGER="less -RF"
 
 if cmd_exists gdircolors; then
 	if [ -f ~/.dir_colors ]; then eval $(gdircolors -b ~/.dir_colors); fi
@@ -105,18 +110,42 @@ fi
 if [ -f /etc/bash_completion ]; then source /etc/bash_completion; fi
 if [ -f /usr/local/etc/bash_completion ]; then source /usr/local/etc/bash_completion; fi
 if [ -f ~/.bash_completion ]; then source ~/.bash_completion; fi
+if [ -f ~/.git-completion.bash ]; then source ~/.git-completion.bash; fi
 if [ -f /usr/local/etc/profile.d/bash_completion.sh ]; then source /usr/local/etc/profile.d/bash_completion.sh; fi
 if [[ -f /usr/local/share/chtf/chtf.sh ]]; then source /usr/local/share/chtf/chtf.sh; fi
+if [[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]]; then source "/opt/homebrew/etc/profile.d/bash_completion.sh"; fi
 
 if cmd_exists pipenv; then
-	eval "$(pipenv --completion)"
+	eval "$(_PIPENV_COMPLETE=bash_source pipenv)"
+	CURRENT_PIPFILE=""
+	function post_cd() {
+		local pipfile
+		local git_dir
+		if pipfile=$(upfile Pipfile) && [[ "$pipfile" != "$CURRENT_PIPFILE" ]]; then
+			CURRENT_PIPFILE="$pipfile"
+			source "$(pipenv --venv)/bin/activate"
+			export PIPENV_ACTIVE=1
+			tmux rename-window "$(basename $(dirname "$pipfile"))"
+		elif git_dir=$(repo); then
+			tmux rename-window "$(basename "$git_dir")"
+		fi
+	}
+	post_cd
 fi
-if cmd_exists pyenv; then
+
+if cmd_exists pyenv || [[ -f ~/.pyenv/bin/pyenv ]]; then
 	export PYENV_ROOT="$HOME/.pyenv"
 	add_path -f -t "$PYENV_ROOT/bin"
 	add_path -f -t "$PYENV_ROOT/shims"
 	export PATH
 	eval "$(pyenv init -)"
 fi
+
+# Prettier kubens/kubectx
+export FZF_DEFAULT_OPTS='--height 50% --layout=reverse --border'
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 source ~/.localsecrets

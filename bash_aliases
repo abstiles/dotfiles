@@ -34,16 +34,22 @@ alias df="df -Ph"
 
 alias browser='if [[ -z "$BROWSER" ]]; then echo "Environment variable \$BROWSER not set!"; else ($BROWSER &>/dev/null &); fi'
 
-function cd () {
-	if [ "$1" == "-" ]; then
+function post_cd() { true; }
+function cd() {
+	if [[ "$1" == "-" ]]; then
 		# Go back to the last directory on the stack.
 		builtin popd > /dev/null;
 		pwd # Print the directory as a reminder.
-	elif [ -z "$1" ]; then
+	elif [[ -z "$1" ]]; then
 		builtin pushd ~ >/dev/null;
 	else
 		builtin pushd "$1" >/dev/null;
 	fi
+	local result="$?"
+	if [[ "$result" != 0 ]]; then
+		return $result
+	fi
+	post_cd
 }
 alias ocd="builtin cd"
 
@@ -63,7 +69,7 @@ function up () {
 			CDPATH+=:$dir
 		done
 	fi
-	builtin pushd "$gotodir" >/dev/null || return 1
+	cd "$gotodir" || return 1
 	pwd # Print the directory for verification's sake.
 }
 complete -o dirnames -o nospace -F _upcomp up
@@ -95,17 +101,29 @@ function _upcomp () {
 
 function repo() {
 	local git_dir
-	git_dir=$(up .git 2>/dev/null) || return 1
-	( cd "$git_dir"/.. && pwd )
+	if [[ -e .git ]]; then
+		pwd
+	elif git_dir=$(upfile .git 2>/dev/null); then
+		( builtin cd "$git_dir"/.. && pwd )
+	else
+		return 1
+	fi
 }
 
-function upfile() {
-	local dir=$(pwd)
-	while [[ $dir != / ]]; do
-		dir=$(dirname "$dir")
-		CDPATH+=:$dir
+function upfile() (
+	if [[ -z $1 ]]; then
+		echo "USAGE: upfile FILENAME" >&2
+		return 1
+	fi
+	while [[ ! -e $1 ]] && [[ $PWD != / ]]; do
+		builtin cd ..
 	done
-}
+	if [[ -e $1 ]]; then
+		echo $PWD/$1
+	else
+		false
+	fi
+)
 
 function c () {
 	local CDPATH=
@@ -132,7 +150,7 @@ function c () {
 		fi
 		gotodir="$expanded_list"
 	fi
-	builtin pushd "$gotodir" >/dev/null
+	cd "$gotodir" >/dev/null
 	pwd # Print the directory for verification's sake.
 }
 
@@ -266,3 +284,44 @@ function genpass() {
 	local len=${1:-30}
 	LC_CTYPE=C gtr -dc A-Za-z0-9_\!\@\#\$\%\^\&\*\(\)-+= < /dev/urandom | head -c "$len"
 }
+
+function ktx() {
+	if (( $# > 1 )); then echo "USAGE: ktx [CONTEXT]" >&2; return 1; fi
+	local selection
+	if selection=$(kubectx | fzf -q "$1" -1 -0); then
+		kubectx "$selection"
+		return
+	fi
+	if [[ -n $1 ]]; then
+		kubectx "$1"
+	fi
+}
+
+function kns() {
+	if (( $# > 1 )); then echo "USAGE: kns [NAMESPACE]" >&2; return 1; fi
+	local selection
+	if selection=$(kubens | fzf -q "$1" -1 -0); then
+		kubens "$selection"
+		return
+	fi
+	if [[ -n $1 ]]; then
+		kubens "$1"
+	fi
+}
+
+function down() {
+	local args
+	if (( $# > 0 )); then
+		args+=(-q "$1")
+	fi
+	local dir=$(find * -type d -print0 | fzf --read0 -1 -0 "${args[@]}")
+	if [[ -z $dir ]]; then
+		return 1
+	fi
+	cd "$dir"
+}
+
+function _down_completion() {
+	readarray -d '' -t COMPREPLY < <(find * -type d -print0 | fzf --read0 --print0 -f "${COMP_WORDS[1]}")
+}
+complete -F _down_completion down

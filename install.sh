@@ -13,7 +13,7 @@ EOF
 
 # Equivalent to "readlink -f" on Linux, but cross-platform (for BSD)
 get_real_path () {
-	echo $(python -c 'import os, sys; print(os.path.realpath(sys.argv[1]))' "$1")
+	echo $(python3 -c 'import os, sys; print(os.path.realpath(sys.argv[1]))' "$1")
 }
 
 files=()
@@ -47,6 +47,6 @@ for item in "${files[@]}"; do
 			if [[ ! -d "$HOME/.$(dirname "$FILE")" ]]; then
 				mkdir -p "$HOME/.$(dirname "$FILE")"
 			fi
-			ln -s "$(get_real_path "$dir/$FILE")" "$HOME/.$FILE"
+			ln -fs "$(get_real_path "$dir/$FILE")" "$HOME/.$FILE"
 		done
 done

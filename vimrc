@@ -22,33 +22,20 @@ else
 	set completeopt=menu,preview
 endif
 
+let g:python3_host_prog = "/opt/homebrew/opt/python@3.11/bin/python3.11"
+
 nnoremap // :nohlsearch<CR>
 " Set 'space' as the leader key
 nnoremap <SPACE> <Nop>
 let mapleader = " "
 
 " Handle plugins"{{{
-if v:version >= 700 && isdirectory(expand('$HOME/.vim/bundle/vundle'))
-	"Required for Vundle
-	filetype off
-	set rtp+=~/.vim/bundle/vundle/
-	call vundle#rc()
-	Bundle 'gmarik/vundle'
-	filetype plugin indent on
-
-	" My Vundle Bundles
-	Bundle 'tpope/vim-surround'
-	Bundle 'tpope/vim-repeat'
-	Bundle 'tpope/vim-git'
-	Bundle 'michaeljsmith/vim-indent-object'
-	Bundle 'benmills/vimux'
-elseif v:version >= 700 && filereadable(expand("$HOME/.vim/autoload/pathogen.vim"))
+if v:version >= 700 && filereadable(expand("$HOME/.vim/autoload/pathogen.vim"))
 	call pathogen#infect()
 	call pathogen#helptags()
-	filetype plugin indent on
-else
-	filetype plugin indent on
 endif
+filetype plugin indent on
+set rtp+=/opt/homebrew/opt/fzf
 "}}}
 
 " Cosmetic stuff"{{{
@@ -163,9 +150,6 @@ autocmd FileType vim map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),
 			\ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
 " Convenience mappings"{{{
-" Quickly close the location list
-nnoremap <Leader><Space> :Denite -resume<CR>
-
 " Maps Ctrl-arrows to resizing a window split
 map <silent> <C-Left> <C-w><
 map <silent> <C-Down> <C-W>-
@@ -200,7 +184,7 @@ if has("clipboard")
 endif
 
 " Open tag in vertical split
-map ] :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+" map ] :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 
 " Fix wonky syntax highlighting by rescanning file
 inoremap <C-L> <Esc>:syntax sync fromstart<CR>
@@ -265,6 +249,7 @@ set laststatus=2
 		let g:airline_symbols = {}
 	endif
 	let g:airline_symbols.colnr = " \u2105"
+	let g:airline_symbols.notexists = "\u1d58"
 "endif
 
 " Deal with wrapped lines gracefully
@@ -283,7 +268,23 @@ omap <Leader>z <Plug>(easymotion-sn)
 "}}}
 
 " YouCompleteMe "{{{
-nnoremap <Leader>gd :YcmCompleter GoTo<CR>
+" Toggle popup help
+let g:ycm_auto_hover=''
+nmap <Leader><Space> <plug>(YCMHover)
+
+function YcmTagJump()
+	" Store where we're jumping from.
+	let pos = [bufnr()] + getcurpos()[1:]
+	let item = {'bufnr': pos[0], 'from': pos, 'tagname': expand('<cword>')}
+	YcmCompleter GoTo
+
+	" Assuming jump was successful, write to tag stack.
+	let winid = win_getid()
+	let stack = gettagstack(winid)
+	let stack['items'] = [item]
+	call settagstack(winid, stack, 't')
+endfunction
+nnoremap <C-]> :call YcmTagJump()<CR>
 "}}}
 
 " For gVim: make the 'file has changed' window not appear and be annoying."{{{
@@ -329,6 +330,27 @@ nnoremap <silent> <C-w>k :TmuxNavigateUp<cr>
 nnoremap <silent> <C-w>l :TmuxNavigateRight<cr>
 "}}}
 
+" FZF settings "{{{
+" Look for instances of the word under the cursor
+" nnoremap <silent> <C-\> :Ag \b<C-R><C-W>\b<CR>
+nnoremap <silent> <C-\> :execute 'Ag \b' .. expand("<cword>") .. '\b'<CR>
+nmap <Leader>/ :BLines<CR>
+nmap <Leader>f :Files<CR>
+nmap <Leader>b :BCommits<CR>
+let g:fzf_colors =
+\ { 'fg':      ['fg', 'Normal'],
+  \ 'bg':      ['bg', 'Normal'],
+  \ 'hl':      ['fg', 'Comment'],
+  \ 'hl+':     ['fg', 'Comment'],
+  \ 'prompt':  ['fg', 'PreProc'],
+  \ 'marker':  ['fg', 'PreProc'],
+  \ 'info':    ['fg', 'Statement'],
+  \ 'border':  ['fg', 'Normal'],
+  \ 'pointer': ['fg', 'Exception'],
+  \ 'spinner': ['fg', 'Label'],
+  \ 'header':  ['fg', 'Comment'] }
+"}}}
+
 " Syntastic settings "{{{
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
@@ -344,37 +366,6 @@ let g:syntastic_mode_map = {
 let g:syntastic_enable_highlighting = 0
 nnoremap <F6> :SyntasticCheck<CR>
 "}}}
-
-" Vim-go settings "{{{
-let g:deoplete#enable_at_startup = 1
-let g:echodoc#enable_at_startup = 1
-let g:go_auto_type_info = 1
-let g:go_echo_command_info = 0
-let g:go_echo_go_info = 0
-let g:go_rename_command = "gopls"
-" let g:go_debug=['shell-commands','lsp']
-call deoplete#custom#option('omni_patterns', { 'go': '[^. *\t]\.\w*' })
-call deoplete#custom#option('auto_complete_delay', 200 )
-function! s:check_back_space() abort "{{{
-	let col = col('.') - 1
-	return !col || getline('.')[col - 1]  =~ '\s'
-endfunction "}}}
-inoremap <silent><expr> <TAB>
-	\ pumvisible() ? "\<C-n>" :
-	\ <SID>check_back_space() ? "\<TAB>" :
-	\ deoplete#manual_complete()
-inoremap <silent><expr> <S-TAB>
-	\ pumvisible() ? "\<C-p>" :
-	\ <SID>check_back_space() ? "\<TAB>" :
-	\ deoplete#manual_complete()
-nnoremap <Leader>gd :GoDoc<CR>
-nnoremap <Leader>gb :GoBuild<CR>
-nnoremap <Leader>gt :GoTest<CR>
-nnoremap <Leader>ga :GoAlternate<CR>
-nnoremap <Leader>gr :GoRename<CR>
-nnoremap <Leader>ge :GoIfErr<CR>
-"}}}
-
 " Denite settings "{{{
 nnoremap <Leader>m :Denite menu<CR>
 nnoremap <leader>gg :Denite -start-filter -auto-resize grep<CR>
@@ -433,18 +424,24 @@ let s:menus.config.file_candidates = [
 	\ ['bashrc', '~/.bashrc'],
 	\ ['bash_aliases', '~/.bash_aliases'],
 	\ ]
-let s:menus.go_commands = {
-	\ 'description': 'Go commands'
+let s:menus.debug_commands = {
+	\ 'description': 'Debug commands'
 	\ }
-let s:menus.go_commands.command_candidates = [
-	\ ['Build', 'GoBuild'],
-	\ ['Test', 'GoTest'],
-	\ ['Test Function', 'GoTestFunc'],
-	\ ['Rename', 'GoRename'],
-	\ ['Callers', 'GoCallers'],
-	\ ['Definition', 'GoDef'],
-	\ ['Generate Interface Method Stubs', 'GoImpl'],
-	\ ['Generate If Err Return', 'GoIfErr'],
+" Hardcoding the menu to use the vimspector human-mode bindings.
+let g:vimspector_enable_mappings = 'HUMAN'
+let s:menus.debug_commands.command_candidates = [
+	\ ['Stop (F3)', 'call vimspector#Stop()'],
+	\ ['Restart (F4)', 'call vimspector#Restart()'],
+	\ ['Continue (F5)', 'call vimspector#Continue()'],
+	\ ['Pause (F6)', 'call vimspector#Pause()'],
+	\ ['Add Function Breakpoint (F8)', 'execute "normal \<Plug>VimspectorAddFunctionBreakpoint"'],
+	\ ['Run to Cursor (<leader>F8)', 'call vimspector#RunToCursor()'],
+	\ ['Toggle Breakpoint (F9)', 'call vimspector#ToggleBreakpoint()'],
+	\ ['Step Over (F10)', 'call vimspector#StepOver()'],
+	\ ['Step Into (F11)', 'call vimspector#StepInto()'],
+	\ ['Step Out (F12)', 'call vimspector#StepOut()'],
+	\ ['Go To Current Line', 'call vimspector#GoToCurrentLine()'],
+	\ ['List Breakpoints', 'call vimspector#ListBreakpoints()'],
 	\ ]
 call denite#custom#var('menu', 'menus', s:menus)
 " Ag command on grep source
@@ -471,5 +468,60 @@ call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
 	\ [ '.git/', '.ropeproject/', '__pycache__/',
 	\   'venv/', 'images/', '*.min.*', 'img/', 'fonts/'])
 "}}}
+
+" let g:gutentags_file_list_command = {'markers': {'.pythontags': '/Users/astiles/scripts/py_path_lister.py'} }
+" let g:gutentags_trace = 1
+" let g:gutentags_ctags_extra_args = [
+"       \ '--tag-relative=yes',
+"       \ '--fields=+ailmnS',
+"       \ ]
+"
+" let g:gutentags_ctags_exclude = [
+"       \ '*.git', '*.svg', '*.hg',
+"       \ '*/tests/*',
+"       \ 'build',
+"       \ 'dist',
+"       \ '*sites/*/files/*',
+"       \ 'bin',
+"       \ 'node_modules',
+"       \ 'bower_components',
+"       \ 'cache',
+"       \ 'compiled',
+"       \ 'docs',
+"       \ 'example',
+"       \ 'bundle',
+"       \ 'vendor',
+"       \ '*.md',
+"       \ '*-lock.json',
+"       \ '*.lock',
+"       \ '*bundle*.js',
+"       \ '*build*.js',
+"       \ '.*rc*',
+"       \ '*.json',
+"       \ '*.min.*',
+"       \ '*.map',
+"       \ '*.bak',
+"       \ '*.zip',
+"       \ '*.pyc',
+"       \ '*.class',
+"       \ '*.sln',
+"       \ '*.Master',
+"       \ '*.csproj',
+"       \ '*.tmp',
+"       \ '*.csproj.user',
+"       \ '*.cache',
+"       \ '*.pdb',
+"       \ 'tags*',
+"       \ 'cscope.*',
+"       \ '*.css',
+"       \ '*.less',
+"       \ '*.scss',
+"       \ '*.exe', '*.dll',
+"       \ '*.mp3', '*.ogg', '*.flac',
+"       \ '*.swp', '*.swo',
+"       \ '*.bmp', '*.gif', '*.ico', '*.jpg', '*.png',
+"       \ '*.rar', '*.zip', '*.tar', '*.tar.gz', '*.tar.xz', '*.tar.bz2',
+"       \ '*.pdf', '*.doc', '*.docx', '*.ppt', '*.pptx',
+"       \ ]
 
 " vim: foldmethod=marker

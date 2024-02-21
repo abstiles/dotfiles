@@ -13,8 +13,11 @@ pkgIndex.tcl
 *.patch
 .netrwhist
 .DS_Store
+.pythontags
 
 git-ignored
 
 venv
 .mypy_cache/
+
+tags

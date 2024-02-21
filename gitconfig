@@ -1,6 +1,6 @@
 [user]
-   name = Anjou Stiles
-   email = anjou.stiles@gmail.com
+	name = Stiles, Anjou
+	email = anjou.stiles@gmail.com
 [pull]
 	ff = only
 [merge]
@@ -12,7 +12,11 @@
 [color]
 	ui = auto
 [alias]
-	whose-line-is-it-anyway = blame
 	fixup = commit --amend --no-edit
 [init]
 	defaultBranch = main
+[filter "lfs"]
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
