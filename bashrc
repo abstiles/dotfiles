@@ -107,7 +107,7 @@ if [ -f ~/.bash_completion ]; then source ~/.bash_completion; fi
 if [ -f /usr/local/etc/profile.d/bash_completion.sh ]; then source /usr/local/etc/profile.d/bash_completion.sh; fi
 
 if cmd_exists pipenv; then
-	eval "$(pipenv --completion)"
+	eval "$(_PIPENV_COMPLETE=bash_source pipenv)"
 fi
 if cmd_exists pyenv; then
 	eval "$(pyenv init -)"

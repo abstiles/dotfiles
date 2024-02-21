@@ -16,3 +16,5 @@
 	fixup = commit --amend --no-edit
 [init]
 	defaultBranch = main
+[includeIf "gitdir:~/writing/"]
+	path = ~/.gitconfig-arachnixe

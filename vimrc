@@ -11,6 +11,7 @@ set splitright
 set ve+=block
 set backspace=indent,eol,start
 set formatoptions+=j
+set nojoinspaces
 
 " Set 'space' as the leader key
 nnoremap <SPACE> <Nop>
@@ -43,9 +44,8 @@ endif
 " Cosmetic stuff"{{{
 syntax enable
 set background=dark
-source ~/.vim_colorscheme
+colorscheme magicbright
 if has("gui_running")
-	execute "colorscheme " . colors
 	set guifont=Droid\ Sans\ Mono\ Slashed\ Perfect:h11
 	set guioptions=egim
 	" Set initial window size
@@ -53,8 +53,6 @@ if has("gui_running")
 	set columns=196
 	set linespace=1
 	set fullscreen
-else
-	execute "colorscheme " . colors
 endif
 " Use the same character for vert splits as Tmux does.
 set fillchars+=vert:│
@@ -165,7 +163,7 @@ if has("clipboard")
 endif
 
 " Open tag in vertical split
-map ] :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+"map ] :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 
 " Fix wonky syntax highlighting by rescanning file
 inoremap <C-L> <Esc>:syntax sync fromstart<CR>
