@@ -20,3 +20,4 @@ https://github.com/tpope/vim-surround
 http://github.com/christoomey/vim-tmux-navigator
 https://github.com/tpope/vim-unimpaired
 https://github.com/tpope/vim-vinegar
+https://github.com/vim-airline/vim-airline.git
