@@ -1,0 +1,10 @@
+brew "bash"
+brew "bash-completion@2"
+brew "coreutils"
+brew "fzf"
+brew "jq"
+brew "macvim"
+brew "pipx"
+brew "the_silver_searcher"
+brew "tmux"
+brew "vimpager", args: ["HEAD"]

@@ -16,6 +16,10 @@ get_real_path () {
 	echo $(python3 -c 'import os, sys; print(os.path.realpath(sys.argv[1]))' "$1")
 }
 
+cmd_exists() {
+	hash "$1" &>/dev/null
+}
+
 files=()
 for arg in "$@"; do
 	if [[ $arg == --help || $arg == -h ]]; then
@@ -34,6 +38,7 @@ if [ -z "$*" ]; then files=('*'); fi
 for item in "${files[@]}"; do
 	find $dir ! -path "$dir/.*" -path "$dir/$item" | \
 		grep -xv "$0" | \
+		grep -xv "Brewfile" | \
 		sed -e "s|^$dir/||" | \
 		while read FILE; do
 			# If this path is a directory, create it and move on
@@ -50,3 +55,11 @@ for item in "${files[@]}"; do
 			ln -fs "$(get_real_path "$dir/$FILE")" "$HOME/.$FILE"
 		done
 done
+
+if ! cmd_exists brew; then
+	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
+
+# Generate Brewfile with "brew bundle dump"
+cd "$dir"
+brew bundle
