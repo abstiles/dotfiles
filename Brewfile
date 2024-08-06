@@ -5,6 +5,7 @@ brew "fzf"
 brew "jq"
 brew "macvim"
 brew "pipx"
+brew "pyenv"
 brew "the_silver_searcher"
 brew "tmux"
 brew "vimpager", args: ["HEAD"]
