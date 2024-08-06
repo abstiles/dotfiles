@@ -388,7 +388,9 @@ let g:syntastic_mode_map = {
 let g:syntastic_enable_highlighting = 0
 nnoremap <F6> :SyntasticCheck<CR>
 "}}}
+
 " Denite settings "{{{
+if exists('denite')
 nnoremap <Leader>m :Denite menu<CR>
 nnoremap <leader>gg :Denite -start-filter -auto-resize grep<CR>
 if ! has("nvim")
@@ -489,6 +491,7 @@ call denite#custom#var('file/rec/py', 'command',
 call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
 	\ [ '.git/', '.ropeproject/', '__pycache__/',
 	\   'venv/', 'images/', '*.min.*', 'img/', 'fonts/'])
+endif
 "}}}
 
 " let g:gutentags_file_list_command = {'markers': {'.pythontags': '/Users/astiles/scripts/py_path_lister.py'} }
