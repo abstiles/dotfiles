@@ -1,4 +1,6 @@
 set nocompatible
+set nojoinspaces
+set spellcapcheck=
 set autoindent
 set tabstop=4
 set shiftwidth=4
@@ -28,6 +30,10 @@ nnoremap // :nohlsearch<CR>
 " Set 'space' as the leader key
 nnoremap <SPACE> <Nop>
 let mapleader = " "
+noremap! <C-H> <C-K>
+digraph -n 8211 " En dash
+digraph -m 8212 " Em dash
+digraph -- 8212 " Em dash
 
 " Handle plugins"{{{
 if v:version >= 700 && filereadable(expand("$HOME/.vim/autoload/pathogen.vim"))
@@ -107,6 +113,9 @@ let g:vimwiki_folding='list'
 autocmd BufRead,BufNewFile README setl filetype=readme
 autocmd FileType readme setl tw=80
 
+"Settings for Markdown
+autocmd FileType markdown setl spell spelllang=en_us
+
 "Settings for Ruby files
 autocmd FileType ruby setl expandtab
 autocmd FileType ruby setl shiftwidth=2
@@ -155,13 +164,6 @@ map <silent> <C-Left> <C-w><
 map <silent> <C-Down> <C-W>-
 map <silent> <C-Up> <C-W>+
 map <silent> <C-Right> <C-w>>
-
-" Maps zg to centering a line on the screen, giving it a kind of parity with
-" zt and zb:
-" q w e r|t|y u i o p
-"  a s d f|g|h j k l ;
-"   z x c v|b|n m , . /
-map zg zz
 
 " More convenient fold navigation
 map <C-j> zj
@@ -255,6 +257,26 @@ set laststatus=2
 " Deal with wrapped lines gracefully
 nnoremap <expr> j v:count ? 'j' : 'gj'
 nnoremap <expr> k v:count ? 'k' : 'gk'
+
+" Helpers to wrap/unwrap markdown text
+command! -range Unwrap :<line1>,<line2>call Unwrap()
+
+function! Unwrap(type = '') range
+	if a:type == 'char' || a:type == 'line'
+		let start = getpos("'[")[1]
+		let end = getpos("']")[1]
+	else
+		let start = a:firstline
+		let end = a:lastline
+	endif
+	execute start . ',' . end . 'g/./,-/\n$/j'
+endfunction
+
+onoremap <silent> iP :<C-U>execute "normal! ?\\v(^\\s*\|---)\\zs$\r:nohlsearch\rjv}"<CR>
+nnoremap gQQ :<C-U>execute "normal! ?\\v(^\\s*\|---)\\zs$\r:nohlsearch\rjv}:Unwrap\r"<CR>
+nnoremap gqq :<C-U>execute "normal! ?\\v^(\\s*\|---)\\zs$\r:nohlsearch\rjv}gq"<CR>
+nnoremap gQ :set operatorfunc=Unwrap<CR>g@
+vnoremap <silent> gQ :Unwrap<CR>
 
 " Easymotion accessories"{{{
 let g:EasyMotion_smartcase = 1
