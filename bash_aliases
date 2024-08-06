@@ -177,7 +177,7 @@ alias :Qa!="exit"
 function vsp() {
 	if (( $# )); then
 		local size=$(( 100 * $# / ($# + 1) ))
-		tmux split-window -hp "$size" "vim -O$(printf " %q" "$@")"
+		tmux split-window -h -l "$size" "vim -O$(printf " %q" "$@")"
 	else
 		tmux split-window -h
 	fi
