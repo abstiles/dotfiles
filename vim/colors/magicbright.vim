@@ -25,7 +25,7 @@ hi Function term=bold ctermfg=White guifg=White
 hi Repeat term=underline ctermfg=227 guifg=#ffff55
 hi Operator ctermfg=203 guifg=#ff5555
 hi Ignore ctermfg=Black guifg=bg
-hi Error term=reverse ctermbg=203 ctermfg=White guibg=#ff5555 guifg=White
+" hi Error term=reverse ctermbg=203 ctermfg=White guibg=#ff5555 guifg=White
 hi Todo term=standout ctermbg=227 ctermfg=Black guifg=#84aeff guibg=#ffff55
 hi NonText term=bold ctermfg=111 gui=NONE guifg=#84aeff
 hi SpecialKey term=bold ctermfg=60 guifg=#304860
@@ -39,10 +39,10 @@ hi DiffAdd term=bold ctermbg=18 guibg=#3333aa
 hi DiffChange term=bold ctermbg=53 guibg=#5f005f
 hi DiffDelete term=bold ctermfg=White ctermbg=196 guifg=White guibg=#c03b3b
 hi DiffText term=reverse cterm=bold ctermfg=227 ctermbg=127 gui=bold guifg=Yellow guibg=#af00af
-hi SpellBad term=reverse ctermbg=203 gui=undercurl guisp=Red
-hi SpellCap term=reverse ctermbg=203 gui=undercurl guisp=#7777ff
-hi SpellRare term=reverse ctermbg=207 gui=undercurl guisp=Magenta
-hi SpellLocal term=underline ctermbg=37 gui=undercurl guisp=Cyan
+hi SpellBad term=reverse gui=undercurl guisp=Red ctermbg=NONE cterm=undercurl ctermul=203
+hi SpellCap term=reverse ctermbg=NONE gui=undercurl guisp=#7777ff cterm=undercurl ctermul=203
+hi SpellRare term=reverse ctermbg=NONE gui=undercurl guisp=Magenta cterm=undercurl ctermul=207
+hi SpellLocal term=underline ctermbg=NONE gui=undercurl guisp=Cyan cterm=undercurl ctermul=37
 hi PmenuSel guibg=#6c6c6c
 hi PmenuSbar guibg=#878787
 hi TabLine guibg=#6c6c6c

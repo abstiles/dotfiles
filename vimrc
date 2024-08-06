@@ -26,6 +26,11 @@ endif
 
 let g:python3_host_prog = "/opt/homebrew/opt/python@3.11/bin/python3.11"
 
+let &t_Cs = "\e[4:3m"
+let &t_Ce = "\e[4:0m"
+let &t_8u = "\e[58;2;%lu;%lu;%lum"
+let &t_AU = "\e[58;5;%dm"
+
 nnoremap // :nohlsearch<CR>
 " Set 'space' as the leader key
 nnoremap <SPACE> <Nop>
