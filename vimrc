@@ -19,7 +19,8 @@ set updatetime=100
 set hidden
 set autowrite
 if ! has('nvim')
-	set completeopt=menu,popup
+	set completeopt=menuone,noinsert,popuphidden
+	set completepopup=highlight:PmenuSel,border:off
 else
 	set completeopt=menu,preview
 endif
@@ -35,10 +36,18 @@ nnoremap // :nohlsearch<CR>
 " Set 'space' as the leader key
 nnoremap <SPACE> <Nop>
 let mapleader = " "
+let maplocalleader = " "
 noremap! <C-H> <C-K>
 digraph -n 8211 " En dash
 digraph -m 8212 " Em dash
 digraph -- 8212 " Em dash
+" Make adding to the main dictionary less easy than the temporary one.
+noremap zG zg
+noremap zg zG
+nnoremap ]t :tabnext<CR>
+nnoremap [t :tabprev<CR>
+nnoremap <C-l> <ESC>:tabnext<CR>
+nnoremap <C-h> <ESC>:tabprev<CR>
 
 " Handle plugins"{{{
 if v:version >= 700 && filereadable(expand("$HOME/.vim/autoload/pathogen.vim"))
@@ -54,7 +63,7 @@ syntax enable
 set background=dark
 colorscheme magicbright
 if has("gui_running")
-	set guifont=Droid\ Sans\ Mono\ Slashed\ Perfect:h11
+	set guifont=DroidSansMonoSlashedPerfect:h14
 	set guioptions=egim
 	" Set initial window size
 	set lines=50
@@ -119,7 +128,82 @@ autocmd BufRead,BufNewFile README setl filetype=readme
 autocmd FileType readme setl tw=80
 
 "Settings for Markdown
-autocmd FileType markdown setl spell spelllang=en_us
+augroup MarkdownOptions
+	autocmd!
+	autocmd FileType markdown setl spell spelllang=en_us
+	function! AutoSpellGoodWords()
+		let l:goodwords_start = search('<!-- spelldict:', 'wcn')
+		let l:goodwords_end = search('<!-- spelldict:\_.*\zs-->', 'wcn')
+		if l:goodwords_start == 0 || l:goodwords_end == 0
+			return
+		endif
+		silent execute ':spellgood! ' . 'spelldict'
+		let l:lines = getline(l:goodwords_start + 1, l:goodwords_end - 1)
+		let l:words = []
+		call map(l:lines, "add(l:words, v:val)")
+		for l:word in l:words
+			silent execute ':spellgood! ' . l:word
+		endfor
+	endfunction
+	function! AddGoodWord()
+		if mode() ==# 'v'
+			let [l:line_start, l:column_start] = getpos("v")[1:2]
+			let [l:line_end, l:column_end] = getpos(".")[1:2]
+			if (line2byte(l:line_start)+l:column_start) > (line2byte(l:line_end)+l:column_end)
+				let [l:line_start, l:column_start, l:line_end, l:column_end] =
+					\ [l:line_end, l:column_end, l:line_start, l:column_start]
+			end
+			let l:lines = getline(l:line_start, l:line_end)
+			if len(l:lines) ==# 0
+				return
+			endif
+			let l:lines[-1] = l:lines[-1][: l:column_end - 1]
+			let l:lines[0] = l:lines[0][l:column_start - 1:]
+			let l:words = [join(l:lines, ' ')]
+		else
+			let [l:line, l:column_start] = searchpos('\<\w\+\(\S\w\+\)*', 'cbn')
+			let [l:line, l:column_end] = searchpos('\w\+\(\S\w\+\)*\>', 'cezn')
+			let l:words = getregion(
+				\ [0, l:line, l:column_start, 0],
+				\ [0, l:line, l:column_end, 0]
+				\ )
+		endif
+		" If it's a possessive, also add the non-possessive version.
+		for idx in range(len(l:words))
+			if match(l:words[idx], "'s$") >= 0
+				call add(l:words, l:words[idx][:-3])
+			endif
+		endfor
+		" If the word is all lowercase, also add the initial capital version.
+		for idx in range(len(l:words))
+			if match(l:words[idx], '\u') < 0
+				call add(l:words, substitute(l:words[idx], '.*', '\u\0', ''))
+			endif
+		endfor
+		let l:goodwords_start = search('<!-- spelldict:', 'wcn')
+		let l:goodwords_end = search('<!-- spelldict:\_.*\zs-->', 'wcn')
+		if l:goodwords_start == 0 || l:goodwords_end == 0
+			silent execute ':spellgood! ' . 'spelldict'
+			let l:result = append(line('$'), ['', '<!-- spelldict:'] + l:words + ['-->'])
+		else
+			let l:result = append(l:goodwords_end - 1, l:words)
+		endif
+		for word in l:words
+			silent execute ':spellgood! ' . word
+		endfor
+		silent! call repeat#set("\<Plug>AddFileWord", v:count)
+	endfunction
+	function! VAddGoodWord() range
+		normal! gv
+		call AddGoodWord()
+		normal! v
+	endfunction
+	autocmd BufReadPost *.md call AutoSpellGoodWords()
+	autocmd FileType markdown noremap <silent> <Plug>AddFileWord :call AddGoodWord()<CR>
+	autocmd FileType markdown nnoremap <silent> zg :call AddGoodWord()<CR>
+	autocmd FileType markdown xnoremap <silent> zg :call VAddGoodWord()<CR>
+	autocmd FileType markdown noremap <silent> zG zg
+augroup END
 
 "Settings for Ruby files
 autocmd FileType ruby setl expandtab
@@ -144,7 +228,7 @@ autocmd FileType sh setl tabstop=4
 autocmd FileType java setl expandtab
 autocmd FileType java setl shiftwidth=2
 autocmd FileType java setl tabstop=2
-autocmd FileType java setl softtabstop=2 "}}}
+autocmd FileType java setl softtabstop=2
 
 " Settings for go files
 augroup CustomGoOptions
@@ -157,6 +241,25 @@ augroup CustomGoOptions
 	autocmd FileType go setlocal showbreak=\ ↪
 	autocmd FileType go setlocal listchars=tab:\ \ ¦,trail:…,lead:…
 augroup END
+
+" Settings for C# files
+augroup CustomCSharpOptions
+	autocmd!
+	autocmd FileType cs setl expandtab
+	autocmd FileType cs setl shiftwidth=2
+	autocmd FileType cs setl softtabstop=2
+augroup END
+
+" Settings for XML files
+augroup CustomXMLOptions
+	autocmd!
+	autocmd FileType xml setl expandtab
+	autocmd FileType xml setl shiftwidth=2
+	autocmd FileType xml setl softtabstop=2
+	autocmd FileType xml setl formatexpr=myxmlformat#Format()
+augroup END
+
+"}}}
 
 "Get highlight info
 autocmd FileType vim map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
@@ -194,8 +297,8 @@ endif
 " map ] :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 
 " Fix wonky syntax highlighting by rescanning file
-inoremap <C-L> <Esc>:syntax sync fromstart<CR>
-nnoremap <C-L> :syntax sync fromstart<CR>
+" inoremap <C-L> <Esc>:syntax sync fromstart<CR>
+" nnoremap <C-L> :syntax sync fromstart<CR>
 
 command! Cleardiff diffoff
 
@@ -247,6 +350,7 @@ set laststatus=2
 	let g:airline_theme = 'dark'
 	let g:deus_termcolors = 256
 	let g:airline#extensions#tabline#enabled = 1
+	let g:airline#extensions#ale#enabled = 1
 	" For some reason this theme needs to be set later in the process or else
 	" the colors are incorrect.
 	autocmd User AirlineAfterInit AirlineTheme deus
@@ -297,7 +401,6 @@ omap <Leader>z <Plug>(easymotion-sn)
 " YouCompleteMe "{{{
 " Toggle popup help
 let g:ycm_auto_hover=''
-nmap <Leader><Space> <plug>(YCMHover)
 
 function YcmTagJump()
 	" Store where we're jumping from.
@@ -311,7 +414,10 @@ function YcmTagJump()
 	let stack['items'] = [item]
 	call settagstack(winid, stack, 't')
 endfunction
-nnoremap <C-]> :call YcmTagJump()<CR>
+if exists('g:ycm_loaded')
+	nmap <Leader><Space> <plug>(YCMHover)
+	nnoremap <C-]> :call YcmTagJump()<CR>
+endif
 "}}}
 
 " For gVim: make the 'file has changed' window not appear and be annoying."{{{
@@ -361,9 +467,11 @@ nnoremap <silent> <C-w>l :TmuxNavigateRight<cr>
 " Look for instances of the word under the cursor
 " nnoremap <silent> <C-\> :Ag \b<C-R><C-W>\b<CR>
 nnoremap <silent> <C-\> :execute 'Ag \b' .. expand("<cword>") .. '\b'<CR>
-nmap <Leader>/ :BLines<CR>
-nmap <Leader>f :Files<CR>
-nmap <Leader>b :BCommits<CR>
+nnoremap <Leader>/ :BLines<CR>
+nnoremap <Leader>f :Files<CR>
+nnoremap <Leader>b :Buffers<CR>
+let g:fzf_layout = { 'window': { 'width': 0.7, 'height': 0.6 } }
+let g:OmniSharp_fzf_options = g:fzf_layout
 let g:fzf_colors =
 \ { 'fg':      ['fg', 'Normal'],
   \ 'bg':      ['bg', 'Normal'],
@@ -498,6 +606,104 @@ call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
 	\   'venv/', 'images/', '*.min.*', 'img/', 'fonts/'])
 endif
 "}}}
+
+" Settings for C#
+let g:OmniSharp_server_use_net6 = 1
+let g:OmniSharp_selector_findusages = 'fzf'
+let g:OmniSharp_popup_position = 'peek'
+if has('nvim')
+  let g:OmniSharp_popup_options = {
+  \ 'winblend': 30,
+  \ 'winhl': 'Normal:Normal,FloatBorder:ModeMsg',
+  \ 'border': 'rounded'
+  \}
+else
+  let g:OmniSharp_popup_options = {
+  \ 'highlight': 'Normal',
+  \ 'padding': [0],
+  \ 'border': [1],
+  \ 'borderchars': ['─', '│', '─', '│', '╭', '╮', '╯', '╰'],
+  \ 'borderhighlight': ['ModeMsg']
+  \}
+  let g:ale_floating_preview_popup_opts = {
+  \ 'highlight': 'Normal',
+  \ 'padding': [0],
+  \ 'border': [1],
+  \ 'borderchars': ['─', '│', '─', '│', '┌', '┐', '┘', '└'],
+  \ 'borderhighlight': ['ModeMsg'],
+  \ 'close': 'click'
+  \}
+endif
+let g:OmniSharp_popup_mappings = {
+\ 'sigNext': '<C-n>',
+\ 'sigPrev': '<C-p>',
+\ 'pageDown': ['<C-f>', '<PageDown>'],
+\ 'pageUp': ['<C-b>', '<PageUp>']
+\}
+let g:ale_linters = {
+\ 'cs': ['OmniSharp'],
+\ 'python': ['pylint', 'mypy', 'pyright']
+\}
+let g:ale_fixers = {
+\ 'python': ['pyflyby', 'isort', 'autoimport'],
+\ 'html': ['tidy']
+\}
+nnoremap <leader>z <Plug>(ale_fix)
+let g:ale_virtualtext_cursor = 0
+let g:ale_sign_error = '●︎'
+let g:ale_sign_warning = '●︎'
+let g:ale_sign_info = '•'
+let g:ale_sign_style_error = '•'
+let g:ale_sign_style_warning = '•'
+let g:ale_set_highlights = 1
+let g:ale_cursor_detail = 1
+let g:ale_floating_preview = 1
+let g:asyncomplete_auto_popup = 1
+let g:asyncomplete_auto_completeopt = 0
+inoremap <expr> <Tab>   pumvisible() ? "\<CR>" : "\<Tab>"
+let g:sharpenup_map_prefix = ','
+let g:sharpenup_codeactions_glyph = "◈"
+
+function TagJumpWrapper(cmd)
+	" Store where we're jumping from.
+	let pos = [bufnr()] + getcurpos()[1:]
+	let item = {'bufnr': pos[0], 'from': pos, 'tagname': expand('<cword>')}
+	execute a:cmd
+	" Assuming jump was successful, write to tag stack.
+	let winid = win_getid()
+	let stack = gettagstack(winid)
+	let stack['items'] = [item]
+	call settagstack(winid, stack, 't')
+endfunction
+
+function CSharpSetup()
+	if exists('g:OmniSharp_loaded')
+		" OmniSharpGotoDefinition
+		nnoremap <silent> <buffer> <C-]> :call TagJumpWrapper('OmniSharpGotoDefinition')<CR>
+	endif
+	highlight SignColumn ctermbg=NONE guibg=NONE
+	" highlight Todo       ctermbg=NONE guibg=NONE
+	" Link ALE sign highlights to similar equivalents without background colours
+	highlight ALEErrorSign ctermfg=196 ctermbg=NONE
+	highlight ALEWarningSign ctermfg=227 ctermbg=NONE
+	highlight ALEInfoSign ctermfg=87 ctermbg=NONE
+endfunction
+
+augroup CustomCSharpOptions
+autocmd!
+autocmd FileType cs setl expandtab
+autocmd FileType cs call CSharpSetup()
+augroup END
+
+let g:ale_completion_enabled = 1
+let g:ale_completion_autoimport = 1
+augroup CustomPythonOptions
+autocmd!
+autocmd FileType python nnoremap <Leader><Space> <plug>(ale_hover)
+autocmd FileType python setl omnifunc=ale#completion#OmniFunc
+augroup END
+
+let g:vimspector_enable_mappings = 'HUMAN'
 
 " let g:gutentags_file_list_command = {'markers': {'.pythontags': '/Users/astiles/scripts/py_path_lister.py'} }
 " let g:gutentags_trace = 1
